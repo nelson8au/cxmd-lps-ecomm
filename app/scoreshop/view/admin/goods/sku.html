@@ -1,0 +1,494 @@
+{extend name="../../admin/view/common/main"/}
+{block name="style"}
+{include file="admin/common/base"}
+{/block}
+{block name='body'}
+<ol class="breadcrumb">
+	<i class="icon icon-angle-left"></i>
+	<li>
+		<a href="{:url('lists')}">Product Management</a>
+	</li>
+	<li>
+		Specification Management
+	</li>
+</ol>
+<style type="text/css">
+    .modal-backdrop{ z-index: 1;}
+    .modal-backdrop.in{ opacity: 0;}
+
+    #editModal .modal-body .editModal-box{
+        border-bottom:1px #ccc dotted;
+        padding-bottom:5px;
+        margin-bottom:5px;
+    }
+    #editModal .modal-body .editModal-title{
+        float:left;
+        width:60px;
+    }
+
+    #editModal .modal-body .editModal-body{
+        margin-left:60px;
+        
+    }
+    #editModal .modal-body .editModal-body .editInput{
+        width:80px;
+        margin:2px;
+        display:inline-block;
+    }
+    #editModal .modal-body .editModal-body .tableList {
+        display:inline-block;
+    }
+    #editModal .modal-body .editModal-body .addTable {
+        margin:2px;
+        width:121px;
+    }
+</style>
+
+<div class="margin-bottom">
+    {if $data['sku'] }
+      <a class="btn btn-info add-sku" href="/scoreshop/admin.Goods/editSku.html?id={$data['id']}" style="margin-bottom: 5px">Translations</a>
+    {/if}
+    <button class="btn btn-info add-sku" data-toggle="modal" data-target="#addModal" style="margin-bottom: 5px">New Spec</button>
+    <button class="btn btn-info add-sku" data-toggle="modal" data-target="#editModal" style="margin-bottom: 5px">Edit Spec</button>
+    <button class="btn btn-danger refresh-sku" onclick="refresh_sku()"  style="margin-bottom: 5px">&nbsp;Clear All Spec</button>
+</div>
+    
+<div class="goods-sku-section card">
+    <div class="form-item">
+        <div class="">
+            <table class="table sku-table table-bordered">
+                <thead>
+                    <tr>
+                        <th id="thead-mark">Selling Price, Payment Price (Points)</th>
+                        <th>Original (Points)</th>
+                        <th>Stock (Unit)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="form-item margin-bottom" style="padding: 10px;">
+            <input type="hidden" name="id" value="{$data['id']}">
+            <button class="btn btn-success" id="submit" type="submit" target-form="form-horizontal">Confirm</button>
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">Back</button>
+        </div>
+    </div>
+</div>
+
+<!-- addModal -->
+<div class="modal fade" id="addModal" aria-labelledby="addModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add Specification</h4>
+      </div>
+      <div class="modal-body">
+        <div class="add-sku-title">
+            <input type="text" class="form-control sku-type" placeholder="Please Enter specification types">
+        </div>
+        <p>Enter specification types, for example: Color, Size</p>
+        <div class="add-sku-list">
+            <input type="text" class="form-control sku-detail" placeholder="Separated by commas">
+        </div>
+        <p>Enter specification details. For example: Red, Blue, Purple.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirm-addsku-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- editModal -->
+<div class="modal fade" id="editModal" aria-labelledby="addModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edit Specification</h4>
+      </div>
+      <div class="modal-body">
+        
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirm-editsku-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+<textarea id="skuJson" type="hidden" class="hidden">{$data['sku']}</textarea>
+{/block}
+{block name='script'}
+<script type="text/javascript">
+    $(document).ready(function(){
+        //保存数据
+        tableSave = {};
+        //初始化
+        var product = $('#skuJson').val();
+            //console.log(product);
+        if (product) {
+            product = $.parseJSON(product);
+            //console.log(product);
+            //遍历table对象
+            for (var i in product['table']) {
+                var arr = [];
+                arr[0] = i;
+                arr[1] = product['table'][i];
+                buildTable(arr);
+                add_type_fnc();
+            }
+
+            //遍历info对象
+            var len = $('.sku-table').find('.oldTr').length;
+            var j = 0;
+            for (var i in product['info']) {
+                j++;
+                $('.sku-table').find('.oldTr:eq('+(j-1)+')')
+                                .find('input[data-type="price"]').val(product['info'][i]['price']);
+                $('.sku-table').find('.oldTr:eq('+(j-1)+')')
+                                .find('input[data-type="marking_price"]').val(product['info'][i]['marking_price']);
+                $('.sku-table').find('.oldTr:eq('+(j-1)+')')
+                            .find('input[data-type="quantity"]').val(product['info'][i]['quantity']); 
+                //console.log('*************这是分界线***************');
+            }
+        }
+
+        //编辑规则弹出框html
+        for (var key in product['table']) {
+            var arr = [];
+            var inpHtm='';
+            arr[0] = key;
+            arr[1] = product['table'][key];
+
+            for(var j=0;j<arr[1].length;j++){
+                inpHtm +='<input class="form-control input-sm editInput" type="text" value='+arr[1][j]+' >';
+            }
+
+            html =  '<div class="editModal-box clearfix" data-type='+key+'>'+
+                        '<div class="editModal-title" ><span>'+key+':</span></div>'+
+                        '<div class="editModal-body">'+
+                        '<div class="tableList">'+inpHtm+'</div>'+
+                        '<div class="addTable">'+
+                            '<div class="input-group">'+
+                            '<input type="text" class="form-control input-sm">'+
+                                '<span class="input-group-btn">'+
+                                '<button class="btn btn-sm btn-danger" type="button">增加</button>'+
+                                '</span>'+
+                            '</div>'+
+                        '</div>'+
+                        '</div>'+
+                    '</div>';
+
+            $('#editModal .modal-body').append(html);
+        }
+
+        //编辑弹出框新增按钮事件绑定
+        $('.addTable button').on('click',function(e){
+            var val = $(this).parent().parent().find('input').val();
+            if(val){
+                var inputHtml = '<input class="form-control input-sm editInput" type="text" value='+val+' >';
+                var _p = $(this).parents('.editModal-body').find('.tableList');
+                $(_p).append(inputHtml);
+            }
+        });
+
+        //编辑弹出框确认按钮事件绑定
+        $('#confirm-editsku-btn').on('click', function(e){
+            $('#editModal').modal('hide');
+            var table = {};
+            //var info = {};
+            //重新组装table
+            $('.editModal-box').each(function(){
+                //var str = '';
+                var _this = $(this);
+                var tabArr=[];
+                $(this).find('.tableList').find('input').each(function(){
+                    tabArr.push($(this).val());
+                    table[_this.attr('data-type')] = tabArr;
+                    
+                }) 
+            });
+            var thead = '<tr>'+
+                        '<th id="thead-mark">Selling Price, Payment Price (Points)</th>'+
+                        '<th>Original (Points)</th>'+
+                        '<th>Stock (Unit)</th>'+
+                        '<th></th>'+
+                        '</tr>';
+            $('.sku-table thead').html(thead);
+            $('.sku-table tbody').html('');
+            //alert('清空');
+            for (var i in table) {
+                var arr = [];
+                arr[0] = i;
+                arr[1] = table[i];
+                buildTable(arr);
+                add_type_fnc();
+            }
+
+            //遍历info对象
+            var len = $('.sku-table').find('.oldTr').length;
+            for (var i=0;i<len;i++) {
+
+                var str='';
+                $('.sku-table').find('.oldTr:eq('+i+')').find('.firstTd').each(function(){
+                    str += $(this).attr('data-type')+':'+$(this).text()+';';
+                });
+                //console.log(str);
+                str = str.replace(/\;$/,'');//去掉末尾的分号
+                
+                var _inputOne = $('.sku-table').find('.oldTr:eq('+i+')').find('input[data-type="price"]');
+                var _inputSec = $('.sku-table').find('.oldTr:eq('+i+')').find('input[data-type="marking_price"]');
+                var _inputThr = $('.sku-table').find('.oldTr:eq('+i+')').find('input[data-type="quantity"]');
+                console.log(product['info'][str]);
+                if(product['info'][str]){
+                    _inputOne.val(product['info'][str]['price']);
+                    _inputSec.val(product['info'][str]['marking_price']);
+                    _inputThr.val(product['info'][str]['quantity']); 
+                }else{
+                    _inputOne.val("{$data['price']}");
+                    _inputSec.val("{$data['marking_price']}");
+                    _inputThr.val(0); 
+                }
+            }
+            //$('#submit').click();
+        });
+
+        //新增规格弹出框确定按钮
+        $('#confirm-addsku-btn').on('click', function(e){
+            $('#addModal').modal('hide');
+            var data = [];
+
+            var sku_type = $('.sku-type').val();
+            var sku_detail = $('.sku-detail').val();
+            if(sku_type==''){
+                return;
+            }
+            if(sku_detail==''){
+                return;
+            }
+            sku_detail = sku_detail.replace(/，/gi,',');//将中文逗号替换成英文逗号
+            sku_detail = sku_detail.split(',');
+            data.push(sku_type);
+            data.push(sku_detail);
+            
+            console.log(data);
+            buildTable(data);   //创建表格
+            add_type_fnc();     //追加标识
+            //遍历表格并写入默认数据
+            var len = $('.sku-table').find('.oldTr').length;
+            //alert(len);
+            for (var i=0;i<len;i++) {
+                var _inputOne = $('.sku-table').find('.oldTr:eq('+i+')').find('input[data-type="price"]');
+                var _inputSec = $('.sku-table').find('.oldTr:eq('+i+')').find('input[data-type="marking_price"]');
+                var _inputThr = $('.sku-table').find('.oldTr:eq('+i+')').find('input[data-type="quantity"]');
+                if(_inputOne.val()==0 || _inputOne.val()==''){
+                    _inputOne.val("{$data['price']}");
+                }
+                if(_inputSec.val()==0 || _inputSec.val()==''){
+                    _inputSec.val("{$data['marking_price']}");
+                }
+                _inputThr.val(0); 
+                //console.log('*************这是分界线***************');
+            }
+            //清空输入框
+            $('.sku-type').val('');
+            $('.sku-detail').val('');
+            //$('#submit').click();
+        });
+
+        /**
+         * 保存SKU数据 
+        */
+        $('#submit').on('click', function(e){
+            e.preventDefault();
+            var info = {};
+            $('.sku-table').find('.oldTr').each(function(){
+                var str = '';
+                $(this).find('.firstTd').each(function(){
+                    str+=$(this).attr('data-type')+':'+$(this).text()+';';
+                });
+                var price = $(this).children('.table-price').children('input[data-type="price"]').val();
+                var marking_price = $(this).children('.table-ori-price').children('input[data-type="marking_price"]').val();
+                var quantity = $(this).children('.table-quantity').children('input[data-type="quantity"]').val();
+                str = str.replace(/\;$/,'');//去掉末尾的分号
+                info[str] = {
+                    price : parseInt(price),
+                    marking_price : parseInt(marking_price),
+                    quantity : parseInt(quantity)
+                }
+            });
+            //console.log(info);
+            var data = {
+                id : "{$data['id']}",
+                //table : tableSave,
+                //info : info,
+                sku : {
+                    table : tableSave,
+                    info : info,
+                }
+            }
+            //console.log('data...',data);
+            $.post("{:url('sku',['id'=>$data['id']])}",data,function(res){
+                //console.log(data);
+                handle_ajax(res);
+            });  
+        });
+    });
+
+    /**  
+     * 将数值四舍五入(保留2位小数)后格式化成金额形式  
+     * @param num 数值(Number或者String)  
+     * @return 金额格式的字符串,如'1,234,567.45'  
+     * @type String  
+     */    
+    function formatCurrency(num) {    
+        num = num.toString().replace(/\$|\,/g,'');    
+        if(isNaN(num))    
+        num = "0";    
+        var sign = (num == (num = Math.abs(num)));    
+        num = Math.floor(num*100+0.50000000001);    
+        var cents = num%100;    
+        num = Math.floor(num/100).toString();
+        if(cents<10)    
+        cents = "0" + cents;    
+        for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)    
+        //num = num.substring(0,num.length-(4*i+3))+','+    
+        num.substring(num.length-(4*i+3));    
+        return (((sign)?'':'-') + num + '.' + cents);    
+    }    
+
+    //创建表格 每次接受一个数组 ['颜色',['红色','蓝色','紫色']]
+    function buildTable(data,callback){
+        var type = $(".sku-table thead tr th").length-3;
+        /*头部插入***************************************/
+        var head = '<th class="head-type" data-type="'+data[0]+'" data-length="'+data[1].length+'">Spec'+type+':'+data[0]+'</th>';
+        $("#thead-mark").before(head);
+        /*
+        * 制造盒子
+        * */
+        var length = data[1].length;
+
+        /**TABLE FOR SAVE*********************************************/
+        var arrData=[]; //过渡接受值数组
+        for(var a=0;a<length;a++){
+            arrData.push(data[1][a]) //将传入数组的第二项值遍历并存到arrData中
+        }
+        //console.log('aaa',arrData);
+        tableSave[data[0]] = arrData; //将arrData赋给tableSave保存 颜色:红色,蓝色,紫色
+        //console.log('tableSave',tableSave);
+        /*************************************************************/
+        //console.log('data...',data);
+
+        if(type == 1){
+            var table='';
+            for(var i=0;i<length;i++){
+                table+=
+                    '<tr class="oldTr">' +
+                    '<td class="firstTd" rowspan="1">'+ data[1][i]+'</td> ' +
+                    '<td class="table-price">' +
+                        '<input style="width: 120px" data-type="price" class="price-in-table form-control" minlength="1" type="text" pattern="^[0-9]+(.[0-9]{1,100})?$" placeholder="Price"/>' +
+                        
+                    '</td> ' +
+                    '<td class="table-ori-price">' +
+                        '<input style="width: 120px" data-type="marking_price" class="price-in-table form-control" minlength="1" type="text" pattern="^[0-9]+(.[0-9]{1,100})?$" placeholder="Original"/>' +
+
+                    '</td>' +
+                    '<td class="table-quantity">' +
+                        '<input style="width: 95px" data-type="quantity" class="price-in-table form-control" minlength="1" type="number" pattern="^[1-9]\\d*$" placeholder="Stock"/>' +
+                        
+                    '</td> ' +
+                    '<td>' +
+                        '<img class="imgBoxBtn sku-icon" data-func="iconImg"/>' +
+                    '</td> ' +
+                    '</tr>' ;
+            }
+            //console.log(table);
+            $(".sku-table").children("tbody").html(table);
+        }
+        /****************************************************/
+        if(!(type == 1)){
+            var oldTr=$(".oldTr");
+            oldTr.each(function () {
+                /*补全前面不显示*用于保存*/
+                var oldTdHtml;
+                $(this).children(".firstTd").each(function () {
+                    oldTdHtml+='<td class="firstTd" rowspan="0" data-type="" style="display: none">'+$(this).text()+'</td>'
+                });
+
+                var newTr='';
+                for(var n=1;n<length;n++){
+                    newTr+=
+                        '<tr>' ;
+                    newTr+=oldTdHtml;
+                    newTr+=
+                        '<td class="firstTd" rowspan="1">'+ data[1][n]+'</td> ' +
+                        '<td class="table-price">' +
+                        '<input style="width: 120px" data-type="price" class="price-in-table form-control js-pattern-number" minlength="1" type="text" pattern="^[0-9]+(.[0-9]{1,100})?$" placeholder="Price"/>' +
+                        
+                        '</td> ' +
+                        '<td class="table-ori-price">' +
+                        '<input style="width: 120px" data-type="marking_price" class="price-in-table form-control js-pattern-number" minlength="1" type="text" pattern="^[0-9]+(.[0-9]{1,100})?$" placeholder="Original"/>' +
+
+                        '</td>' +
+                        '<td class="table-quantity">' +
+                        '<input style="width: 95px" data-type="quantity" class="price-in-table form-control js-pattern-number" minlength="1" type="number" pattern="^[1-9]\\d*$" placeholder="Stock"/>' +
+                        
+                        '</td> ' +
+                        '<td>' +
+                        '<img class="imgBoxBtn sku-icon" data-func="iconImg"/>' +
+                        '</td> ' +
+                        '</tr>' ;
+                }
+               $(this).after(newTr);
+            });
+            /**********************************/
+            var td='<td class="firstTd" rowspan="1">'+ data[1][0]+'</td>';
+            /***********************************/
+            oldTr.each(function () {
+                /*更新rowspan*/
+                $(this).children(".firstTd").each(function () {
+                   var  rowSpan = $(this).attr("rowspan");
+                    $(this).attr("rowspan",rowSpan*length)
+                });
+                /*添加新的一行**********************************/
+                $(this).children(".table-price").before(td)
+            });
+            $(".sku-table").children("tbody").children("tr").attr("class","oldTr")
+        }
+
+        /*回调*******/
+        if(callback){
+            callback()
+        }
+    }
+
+    //加上type标识
+    function add_type_fnc(){
+        var length = $('.sku-table').find('.head-type').length;
+        for(var i = 0; i < length; i++){
+            var type = $('.sku-table').find('.head-type:eq('+i+')').attr('data-type');
+            $('.sku-table').find('.oldTr').find('.firstTd:eq('+i+')').attr('data-type',type);
+        }
+    }
+
+    function refresh_sku(){
+        if(confirm("Are you sure you want to clear all?")){
+            var data ={
+               id : "{$data['id']}",
+               sku : ""
+            }
+            $.post("{:url('sku')}",data,function(res){
+                //console.log(data);
+                handle_ajax(res);
+                //location.reload();
+            });
+        }
+    }
+</script>
+{/block}

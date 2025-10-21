@@ -1,0 +1,58 @@
+
+
+<div class="category-form">
+    <!-- 数据表单 -->
+    <div class="form-box">
+        
+        <form class="form-horizontal ajax-form" role="form" action="{:url('')}" method="post">
+        <input type="hidden" name="id" value="{$data.id|default=0}">
+        
+        <div class="form-group">
+            <label class="col-xs-2">Custom Name</label>
+            <div class="col-xs-8">
+                <input type="text" class="form-control input-dm" name="title" placeholder="Please Enter a Custom Name" value="{$data.title|default=''}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="" class="col-xs-2">Short Description</label>
+            <div class="col-xs-8">
+                <textarea class="form-control input-dm" rows="3" name="description" placeholder="Please Enter a Short Description">{$data.description|default=''}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="col-xs-2">Cover</label>
+            <div class="col-xs-8">
+                {:single_image_upload('cover', $data.cover)}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="col-xs-2">Sort</label>
+            <div class="col-xs-8">
+                <input type="number" class="form-control input-dm" name="sort" value="{$data.sort|default=0}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-xs-2">Status Settings
+</label>
+            <div class="col-xs-8">
+                <input type="radio" name="status" id='status1' value="1" checked>
+                <label for="status1">Enable</label>
+
+                <input type="radio" id='status0' name="status" value="0">
+                <label for="status0">Disable</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-xs-2"></label>
+            <div class="col-xs-10">
+                <button type="submit" class="btn btn-lg btn-success submit-success">Save</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>

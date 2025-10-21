@@ -1,0 +1,25 @@
+<!--自定义属性选择框-->
+<div class="attribute-form-box">
+    {volist name="$attribute_tree" id="tree"}
+	{if !empty($tree['_child'])}
+	<div class="item" data-id="{$tree['id']}">
+	    <h3 class="top_type">{$tree['title']}</h3>
+	    <div class="clearfix">
+            {if $tree['_child']}
+			{volist name="$tree['_child']" id="_child"}
+			{if $_child['checked'] == 1}
+			<input type="checkbox" name="attribute_ids[]" value="{$_child['id']}" id="attribute_{$_child['id']}" checked>
+			<label class="checkbox-inline" for="attribute_{$_child['id']}">{$_child['title']}</label>
+			{else}
+			<input type="checkbox" name="attribute_ids[]" value="{$_child['id']}" id="attribute_{$_child['id']}">
+			<label class="checkbox-inline" for="attribute_{$_child['id']}">{$_child['title']}</label>
+			{/if}
+			{/volist}
+			{/if}
+	    </div>
+	</div>
+	{/if}
+	{/volist}
+</div>
+<div class="help-block">Attribute values can be multi-selected</div>
+<!--自定义属性选择框 END-->

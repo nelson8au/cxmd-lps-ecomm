@@ -1,0 +1,66 @@
+name: CI/CD - Build & Deploy to ECS Fargate
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY: cxmd-lps-ecom
+  ECS_CLUSTER: cxmd-lps-ecom-cluster
+  ECS_SERVICE: cxmd-lps-ecom-service
+  TASK_FAMILY: cxmd-lps-ecom-task
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image variables
+        id: vars
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          IMAGE_URI="${ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${GITHUB_SHA::8}"
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.vars.outputs.IMAGE_URI }}
+          file: ./Dockerfile
+
+      - name: Prepare task definition
+        run: |
+          # Replace image placeholder in local copy of task-definition
+          sed "s|REPLACE_IMAGE|${{ steps.vars.outputs.IMAGE_URI }}|g" ecs/task-definition.json > ecs/task-def-for-register.json
+          # Replace DB host placeholder if you want (optional)
+          sed -i "s|REPLACE_DB_HOST|${{ secrets.DB_HOST }}|g" ecs/task-def-for-register.json
+          cat ecs/task-def-for-register.json
+
+      - name: Register task definition
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file://ecs/task-def-for-register.json
+
+      - name: Update ECS service to new task definition
+        run: |
+          # get latest revision ARN
+          FAMILY=${{ env.TASK_FAMILY }}
+          REV=$(aws ecs describe-task-definition --task-definition $FAMILY --query 'taskDefinition.revision' --output text)
+          echo "Registered revision: $REV"
+          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment

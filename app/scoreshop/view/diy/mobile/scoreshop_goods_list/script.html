@@ -1,0 +1,97 @@
+<!--商品列表-->
+<script type="text/html" data-object-type="scoreshop_goods_list">
+
+	<div class="object-item" data-type="scoreshop_goods_list" data-category-api="{:url('scoreshop/admin.category/tree')}">
+		<div class="object-drag scoreshop-goods-list">
+			<div class="scoreshop-goods-list-preview">
+                <div class="title clearfix">
+                	<h3>Points Mall Item</h3>
+                	<small class="more">View More </small>
+                </div>
+                <div class="list clearfix">
+                	
+				</div>
+			</div>
+		</div>
+		<div class="diy-preview-controller scoreshop-goods-list">
+			<div class="panel panel-info">
+			 	<div class="panel-heading">
+					Points Mall Item
+			 	</div>
+			 	<div class="panel-body">
+					<form class="form-horizontal" data-type="scoreshop_goods_list">
+						<input type="hidden" name="app" value="scoreshop"/>
+						<input type="hidden" name="type" value="scoreshop_goods_list"/>
+						<input type="hidden" name="type_title" value="Points Mall Item"/>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Title</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" name="title" value="Points Mall Item">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Product Category</label>
+							<div class="col-sm-9">
+							<select class="form-control" name="category_id">
+									<option value="0">ALL</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3">Display No.</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" name="rows" value="2">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-3">Sort By</label>
+							<div class="col-sm-9">
+								<select class="form-control" name="order_field">
+									<option value="create_time" selected>Release Time</option>
+									<option value="update_time">Update Time</option>
+									<option value="view">Views</option>
+									<option value="price">Price</option>
+									<option value="sort">Sorting Value</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3">Sorting Direction</label>
+							<div class="col-sm-9">
+								<select class="form-control" name="order_type">
+									<option value="ASC" selected>Ascending</option>
+									<option value="DESC">Descending</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">Layout Arrangement</label>
+							<div class="col-sm-9">
+								<select class="form-control" name="rank">
+									<option value="0">Horizontal</option>
+									<option value="1" selected>Vertical</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3"></label>
+							<div class="col-sm-9">
+								<button type="button" class="btn btn-primary">Confirm</button>
+							</div>
+						</div>
+					</form>	
+				</div>
+			</div>
+		</div>
+		<div class="action">
+			<div class="del-btn"><i class="fa fa-times-circle fa-2x"></i></div>
+			<div class="up-btn"><i class="fa fa-chevron-circle-up fa-2x"></i></div>
+			<div class="down-btn"><i class="fa fa-chevron-circle-down fa-2x"></i></div>
+		</div>
+	</div>
+	
+</script>
+<!--商品列表END-->

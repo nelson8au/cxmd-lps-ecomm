@@ -1,0 +1,60 @@
+
+<form action="{:url('manageEdit')}" method="post" class="form-horizontal form ajax-form">
+	<input type="hidden" name="id" class="form-control" value="{$id}" />
+	<input type="hidden" name="pid" class="form-control" value="{$pid}" />
+	<div class="form-body">
+		<!--显示父级分类-->
+		{if !empty($pid)}
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Type</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" class="form-control" value="{$parent['title']}" readonly />
+			</div>
+		</div>
+		{/if}
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Value</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="title" class="form-control" value="{$attribute_data['title']|default=''}" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Sort</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="sort" class="form-control" value="{$attribute_data['sort']|default=0}"/>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Status</label>
+			<div class="form-controls radio-controls col-sm-8" data-role="status-chonse" data-status="{$attribute_data['status']|default=1}">
+				<input type="radio" name="status" id="is_status-1" value="1"> 
+				<label class="radio-inline" for="is_status-1">Enable</label>
+				<input type="radio" name="status" id="is_status-0" value="0">
+				<label class="radio-inline" for="is_status-0"> Disable</label>
+			</div>
+			<script>
+            $(function(){
+                //设置选中
+                var status = $('[data-role="status-chonse"]').data('status');
+                $('input[name="status"]').each(function(){
+                    if($(this).val() == status){
+                        $(this).attr("checked",true);
+                    }
+                });
+            })
+            </script>
+
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label"></label>
+			<div class="form-controls col-sm-8">
+				<input type="submit" name="submit" value="Submit" class="btn btn-primary" />
+			</div>
+		</div>
+	</div>
+</form>
+

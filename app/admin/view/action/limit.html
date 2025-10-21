@@ -1,0 +1,97 @@
+{extend name="common/main"/}
+{block name="body"}
+    <!-- 标题栏 -->
+    <div class="main-title">
+        <h2>
+            Behavior Restriction List
+        </h2>
+    </div>
+    
+    <div class="with-padding">
+    <div class="clearfix button-box tool-box row">
+        <div class="col-xs-8 pd0">
+            <a type="button" class="btn btn-info" href="{:url('editLimit')}" title="Add">
+                Add
+            </a>
+            <button class="btn btn-success ajax-post" url="{:url('limitStatus',['status'=>'1'])}" target-form="ids">
+                Enable
+            </button>
+            <button class="btn btn-warning ajax-post confirm" url="{:url('limitStatus',['status'=>'0'])}" target-form="ids">
+                Disable
+            </button>
+            <button class="btn btn-danger ajax-post confirm" url="{:url('limitStatus',['status'=>'-1'])}" target-form="ids">
+                Delete
+            </button>
+        </div>
+
+        <div class="col-xs-4">
+           
+        </div>
+    </div>
+    <!-- 数据列表 -->
+    <div class="data-table">
+        <table class="table table-bordered table-striped table-hover muu-table">
+            <thead>
+                <tr>
+                <th class="row-selected row-selected">
+                    <input class="check-all" id="check-all" type="checkbox"/>
+                    <label for="check-all"></label>
+                </th>
+                <th class="">{:lang("ID")}</th>
+                <th>Title</th>
+                <th>Name</th>
+                <th>Frequency</th>
+                <th>Time Unit</th>
+                <th>Punishment</th>
+                <th>Send Reminder</th>
+                <th>Notification Message Content</th>
+                <th>Behavior</th>
+                <th>Status</th>
+                <th class="">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {notempty name="list"}
+                {volist name="list" id="vo"}
+                <tr>
+                    <td>
+                        <input class="ids" id="ids-{$vo.id}" type="checkbox" name="ids[]" value="{$vo.id}">
+                        <label for="ids-{$vo.id}"></label>
+                    </td>
+                    <td>{$vo.id} </td>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.frequency}</td>
+                    <td>{$vo.time}</td>
+                    <td>{$vo.punish}</td>
+                    <td>{$vo.if_message}</td>
+                    <td>{$vo.message_content}</td>
+                    <td>{$vo.action_list}</td>
+                    <td>{$vo.status}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info" href="{:url('admin/action/editLimit',['id'=>$vo['id']])}">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+                {/volist}
+                {else/}
+                <td colspan="7" class="text-center"> Oh! It's empty~ </td>
+                {/notempty}
+            </tbody>
+        </table>
+    </div>
+    <!-- 分页 -->
+    <div class="page">
+        {:htmlspecialchars_decode($page)}
+    </div>
+    <!-- /分页-->
+    </div>
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+
+
+</script>
+{/block}

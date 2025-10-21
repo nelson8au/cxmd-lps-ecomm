@@ -1,0 +1,183 @@
+{extend name="../../admin/view/common/main"/}
+{block name="style"}
+{include file="admin/common/base"}
+{/block}
+{block name='body'}
+<ol class="breadcrumb">
+	<i class="icon icon-angle-left"></i>
+	<li>
+		<a href="{:url('lists')}">Order Management</a>
+	</li>
+	<li>
+		Order Details
+	</li>
+</ol>
+<div class="order-detail-section">
+	<div class="panel panel-warning order_orders">
+		<div class="panel-heading">Order Process</div>
+		<div class="panel-body">
+		<div class="common_box for-liucheng margin-top-10">
+            <div class="liulist for-cur"></div>
+			<div class="liulist {if $data['status'] >= 3}for-cur{/if}"></div>
+			<div class="liulist {if $data['status'] >= 4}for-cur{/if}"></div>
+            <div class="liulist {if $data['status'] >= 5}for-cur{/if}"></div>
+
+            <div class="liutextbox">
+                <div class="liutext for-cur">
+                    <em>1</em><br><strong>Place Order</strong>
+                </div>
+                <div class="liutext {if $data['status'] >= 3}for-cur{/if}">
+                    <em>3</em><br><strong>Product Delivery</strong>
+				</div>
+				<div class="liutext {if $data['status'] >= 4}for-cur{/if}">
+                    <em>4</em><br><strong>Confirm Receipt</strong>
+                </div>
+                <div class="liutext {if $data['status'] >= 5}for-cur{/if}">
+                    <em>5</em><br><strong>Complete Review</strong>
+                </div>
+            </div>
+        </div>
+    	</div>
+	</div>
+	<div class="panel panel-info order_orders">
+		<div class="panel-heading">Order Information</div>
+		<div class="panel-body">
+			<p>Order No.：{$data['order_no']}</p>
+		    <p>Create Time：{$data['create_time_str']}</p>
+			<p>Order From：{$data['channel_str']}</p>
+			<p>Points：{$data['products']['price']}</p>
+			<p>Shipping Fee：￥ {$data['delivery_fee']}</p>
+		    <p>Points to be Paid：{$data['paid_fee']}</p>
+		    {if $data['paid'] == 1}
+		    <p>Payment Status：Paid</p>
+		    <p>Payment Time: {$data['paid_time_str']}</p>
+		    {else}
+		    <p>Payment Status：Unpaid</p>
+		    {/if}
+		</div>
+	</div>
+
+	<div class="panel panel-info order_orders">
+		<div class="panel-heading">Buyer Information</div>
+		<div class="panel-body">
+			{if is_array($data['user_info']) && !empty($data['user_info'])}
+			<p>Buyer：{$data['user_info']['nickname']|default=''} <a href="{:url('admin/member/detail',['uid'=>$data['uid']])}">(Click to view user details)</a></p>
+			<p>Registration Time：{$data['user_info']['create_time_str']} </p>
+			{if $data.order_info_type != 'vipcard'}
+			<p>Shipping Address：{$data['address_info']['pos_province']|default=''} {$data['address_info']['pos_city']|default=''} {$data['address_info']['pos_district']|default=''} {$data['address_info']['address']|default=''} </p>
+			<p>Recipient：{$data['address_info']['name']|default=''} </p>
+			<p>Phone Number：{$data['address_info']['phone']|default=''} </p>
+			{/if}
+			{else /}
+			The user has been deleted
+			{/if}
+		</div>
+	</div>
+
+	<div class="products-list card">
+		<table class="table table-bordered muu-table">
+			<thead>
+	            <tr class="active">
+	                <th>Product Information</th>
+	                <th>Quantity/Specifications</th>
+	                <th>Shipping Fee</th>
+	                <th>Points to Pay</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+				<tr>
+		            <td>
+		            	<div class="cover">
+		                    <img src="{$data['products']['cover_100']}">
+		                </div>
+		                <div class="info">
+		                    <div class="title text-ellipsis">{$data['products']['title']}</div>
+		                    <div class="price text-ellipsis">￥ {$data['products']['price']}</div>
+		                </div>
+		            </td>
+		            <td>
+						<p>Quantity：{$data['products']['quantity']}</p>
+						<p>Specifications：{$data['products']['sku']}</p>
+		            </td>
+		            <td>
+						￥ {$data['delivery_fee']}
+		            </td>
+		            <td>
+						Points：{$data['paid_fee']}
+		            </td>
+		        </tr>
+	        </tbody>
+		</table>
+	</div>
+
+
+	<div class="panel panel-success order_orders">
+		<div class="panel-heading">Product Review</div>
+		<div class="panel-body">
+			{if empty($data['evaluate'])}
+			未评价
+			{else}
+			<div class="detail-evaluate-box">
+				<div class="evaluate-score" id="start_{$data['id']}">
+	                <div class="atar_show">
+	                    <div class='show_star' tip="{$evaluate_info['value']}"></div>
+	                </div>
+	                <div class="pf">Rating：<span class="fenshu">{$evaluate_info['value']}</span> Stars</div>
+				</div>
+	            <div class="detail">
+					<p>{$evaluate_info['content']}</p>
+				</div>
+				{if !empty($evaluate_info['images'])}
+	            <div class="images clearfix">
+	                {foreach $evaluate_info['images'] as $k=>$v}
+	                <span class="item"><img src="{$v['thumb']}" /></span>
+	                {/foreach}
+				</div>
+				{/if}
+	            <div class="evaluate-add-time">
+					<p>{$evaluate_info['create_time_str']}</p>
+				</div>
+
+				{if !empty($evaluate_info['reply'])}
+				<div class="evaluate-reply">
+					<h4>Official Response</h4>
+					<p>{$evaluate_info['reply']}</p>
+					<p>{$evaluate_info['reply_time_str']}</p>
+				</div>
+				{/if}
+
+	            <div class="action">
+					<a href="javascript::" class="btn btn-warning" data-remote="{:url('scoreshop/admin.evaluate/reply',['id'=>$evaluate_info['id'],'order_no'=>$evaluate_info['order_no']])}" data-toggle="modal">Reply</a>
+					<a href="javascript::" class="btn btn-info" data-remote="{:url('scoreshop/admin.evaluate/edit',['id'=>$evaluate_info['id'],'order_no'=>$evaluate_info['order_no']])}" data-toggle="modal">Edit</a>
+					<a href="{:url('scoreshop/admin.evaluate/status',['id'=>$evaluate_info['id']])}" class="btn btn-danger ajax-post" data-confirm="Are you sure you want to delete this review?">Delete</a>
+	            </div>
+
+	        </div>
+			{/if}
+		</div>
+	</div>
+
+</div>
+<script>
+	$(function (){
+        //显示评分
+        setTimeout(function () {
+			showScoreFun('.show_star');
+		},200)
+    });
+
+	/**
+	 * 显示评价计分
+	 * @param  {[type]} ele [description]
+	 * @return {[type]}     [description]
+	 */
+	function showScoreFun(ele)
+	{
+		//显示分数
+		var num = $(ele).attr("tip");
+		var w = num*2*24.5;//
+		$(ele).css("width",w);
+		$(ele).parent(".atar_show").siblings("span").text(num+"Stars");
+	}
+</script>
+{/block}

@@ -1,0 +1,107 @@
+<div class="edit-evaluate-box">
+            
+    <form action="{:url('edit',['id'=>$evaluate_info['id'],'order_no'=>$evaluate_info['order_no']])}" method="post" class="form ajax-form" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{$evaluate_info['id']}" />
+        <input type="hidden" name="order_no" value="{$order_info['order_no']}" />
+        <textarea class="form-control" name="content" row=3 placeholder="Please Enter a Review">{$evaluate_info['content']}</textarea>
+        
+        <div class="evaluate-images">
+            <div class="evaluate-image-uploader">
+                <a href="javascript:;" class="mui-upload-btn mui-pull-right js-image-images"></a>
+                <div class="mui-image-preview js-image-preview mui-pull-right">
+                    {if is_array($evaluate_info['images'])}
+                    {foreach $evaluate_info['images'] as $key=>$val}
+                        <input type="hidden" value="{$val['image']}" name="images[]">
+                        <img src="{$val['thumb']}" data-preview-src="" data-preview-group="__IMG_UPLOAD_images">
+                    {/foreach}
+                    {/if}
+                </div>
+            </div>
+        </div>
+
+        <div class="">
+            <div id="start_{$order_info['id']}" class="start-item clearfix" >
+                <div class="star_score"></div>
+                <p>Your rating: <span class="fenshu">5</span> Stars</p>
+                <div class="attitude"></div>
+                <input type="hidden" name="value" value="5"/>
+            </div>
+        </div> 
+        <div class="">
+            <button type="submit" class="btn btn-block btn-success" >Confirm</button>
+        </div>
+    </form>
+    <script>
+
+    $(function(){
+        scoreFun($('.start-item'));
+        //默认选择5分
+        $('.star_score>a:last').click();
+    });
+    function scoreFun(object, opts) {
+        var defaults = {
+            fen_d: 24.5,
+            ScoreGrade: 10,
+            types: [
+                "Very Dissatisfied",
+                "Far from what was described by the seller, very dissatisfied",
+                "Dissatisfied, does not match the seller's description, not satisfied",
+                "Average",
+                "Normal",
+                "Not as good as described by the seller",
+                "Satisfied",
+                "Very Satisfied, mostly consistent with the seller's description, quite satisfied",
+                "Extremely Satisfied",
+                "Excellent, completely matches the seller's description, very satisfied"
+            ],
+            nameScore: ".fenshu",
+            parent: ".star_score",
+            attitude: ".attitude"
+        };
+        var options = $.extend({}, defaults, opts);
+        var countScore = object.find(options.nameScore);
+        var startParent = object.find(options.parent);
+        var atti = object.find(options.attitude);
+        var now_cli;
+        var fen_cli;
+        var atu;
+        var fen_d = options.fen_d;
+        var len = options.ScoreGrade;
+        startParent.width(fen_d * len);
+        var preA = (5 / len);
+        for (var i = 0; i < len; i++) {
+            var newSpan = $("<a href='javascript:void(0)'></a>");
+            newSpan.css({
+                "left": 0,
+                "width": fen_d * (i + 1),
+                "z-index": len - i
+            });
+            newSpan.appendTo(startParent)
+        }
+        startParent.find("a").each(function(index, element) {
+            $(this).click(function() {
+                now_cli = index;
+                show(index, $(this));
+
+            });
+        });
+
+        function show(num, obj) {
+            var n = parseInt(num) + 1;
+            var lefta = num * fen_d;
+            var ww = fen_d * n;
+            var scor = preA * n;
+            var atu = options.types[parseInt(num)];
+            object.find("a").removeClass("clibg");
+            obj.addClass("clibg");
+            obj.css({
+                "width": ww,
+                "left": "0"
+            });
+            countScore.text(scor);
+            atti.text(atu)
+            $('[name="value"]').val(scor);
+        }
+    };
+    </script>
+</div>

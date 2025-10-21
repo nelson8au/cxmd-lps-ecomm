@@ -1,0 +1,86 @@
+{extend name="common/main"/}
+
+{block name="body"}
+	<div class="main-title">
+		<h2>Edit Configuration Item</h2>
+	</div>
+    <div class="with-padding">
+        <form action="{:url()}" method="post" class="form-horizontal">
+            <div class="form-item builder_item">
+                <label class="item-label">UID<span class="check-tips">(Only use English and must be unique)</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-control" style="width: 400px" name="name" value="{$info.name|default=''}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Title<span class="check-tips">(Configuration title displayed in the backend)</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-control" style="width:400px;" name="title" value="{$info.title|default=''}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Sort<span class="check-tips">(Order of display in the group)</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-small form-control" style="width: 400px" name="sort" value="{$info.sort|default=0}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Type<span class="check-tips">(The system will parse the configuration value based on the type)</span></label>
+                <div class="controls">
+                    <select name="type" class="form-control" style="width:auto;">
+                        {volist name="type" id="type"}
+                            <option value="{$key}">{$type}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Group<span class="check-tips">(For batch settings; if not grouped, it will not appear in system settings)</span></label>
+                <div class="controls">
+                    <select name="group" class="form-control" style="width: auto">
+                        {volist name="group" id="group"}
+                            <option value="{$key}">{$group}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Configuration Value<span class="check-tips">(The value of the configuration)</span></label>
+                <div class="controls">
+                    <label class="textarea input-large">
+                        <textarea name="value" class="form-control" style="width: 400px;height: 200px">{$info.value|default=''}</textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Configuration Item<span class="check-tips">(If it's an select type, this item needs to be configured)</span></label>
+                <div class="controls">
+                    <label class="textarea input-large">
+                        <textarea name="extra" class="form-control" style="width: 400px;height: 200px">{$info.extra|default=''}</textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Description<span class="check-tips">(Description of the configuration)</span></label>
+                <div class="controls">
+                    <label class="textarea input-large">
+                        <textarea name="remark" class="form-control" style="width: 400px;height: 200px">{$info.remark|default=''}</textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <input type="hidden" name="id" value="{$info.id|default=''}">
+                <button class="btn btn-success submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">Confirm</button>
+                <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">Back</button>
+            </div>
+        </form>
+    </div>
+
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    Think.setValue("type", "{$info.type|default='num'}");
+    Think.setValue("group", {$info.group|default=0});
+</script>
+{/block}

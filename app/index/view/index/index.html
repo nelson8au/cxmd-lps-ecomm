@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  {include file="../../common/view/head"/}
+
+  <style>
+    .login-background {
+      background-image: url('/images/login/background.png');
+    }
+
+    #main-container {
+      margin-top: unset;
+    }
+
+    .login-pages {
+      margin: unset;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .login-pages .logo>h3 {
+      text-align: center;
+    }
+
+    .login-pages .logo>h3>a>img {
+      height: unset;
+    }
+
+    .login-pages .login-body .login-picture>img {
+      width: 100%;
+      height: unset;
+    }
+
+    .login-main .btn-login {
+      background-color: #58af2c;
+      height: 50px;
+    }
+
+    .login-main .register-section a {
+      color: #58af2c;
+    }
+
+    .login-main .normal-login .nav-tabs>li .underline {
+      background-color: #58af2c;
+    }
+  </style>
+</head>
+
+<body class="login-background">
+  <div id="main-container" class="container">
+    <div class="login-pages">
+      <div class="login-body clearfix">
+        <!-- <div class="login-picture">
+          <img src="/images/login/banner.png" alt="">
+        </div> -->
+        <div class="login-form">
+          <div class="login-main">
+            <div class="logo">
+              <h3>
+                <a href="/">
+                  <img src="/favicon.svg" alt="{$muu_config_data.WEB_SITE_NAME}">
+                </a>
+              </h3>
+            </div>
+
+            <div class="normal-login need-captcha">
+              <ul class="nav nav-tabs" style="display: flex; justify-content: space-between">
+                <!-- <li class="active login-method-password" style="margin-right: 0">
+                  <a data-toggle="tab" href="#password" data-placeholder="邮箱" data-input-type="email"
+                    data-user-type="member" data-login-type="password">用户登录</a>
+                  <div class="underline active"></div>
+                </li> -->
+                <li class="active login-method-admin">
+                  <a data-toggle="tab" href="#password" data-placeholder="Username" data-input-type="text"
+                    data-user-type="admin" data-login-type="password">Admin Login</a>
+                  <div class="underline active"></div>
+                </li>
+              </ul>
+              <form action="{:url('ucenter/Common/login')}" class="ajax_form" method="post" autocomplete="off">
+                <input type="hidden" name="login_type" value="password" />
+                <input type="hidden" name="role" value="admin">
+                <div class="tab-content">
+                  <div class="tab-pane active" id="password">
+                    <div class="login-group">
+                      <input class="login-input login-account" name="account" placeholder="" type="text" />
+                    </div>
+                    <div class="login-group password-group">
+                      <input class="login-input" name="password" placeholder="Please Enter Password" type="password" />
+                      <i class="iconfont" data-type="hidden">&#xe67a;</i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="login-opt clearfix">
+                  <!-- <div class="remember-me checkbox-primary">
+                    <input type="checkbox" name="remember" value="1" class="remember" id="remberMe" />
+                    <label for="remberMe">记住我</label>
+                  </div>
+                  <div class="forget text-right">
+                    <a class="" href="{:url('ucenter/Common/mi')}" style="color: #666666; font-size: 14px">忘记密码</a>
+                  </div> -->
+                </div>
+                {php} if(!empty($_SERVER['HTTP_REFERER'])){ $referer =
+                $_SERVER['HTTP_REFERER']; }else{ $referer = url('index/index/index'); }
+                session('login_http_referer',$referer); {/php}
+                <input name="from" type="hidden" value="{$referer}" />
+                <div class="form-group">
+                  <button class="btn btn-block btn-login btn-lg" type="submit">
+                    Login
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- <div class="register-section">
+              还没有账号?
+              <a class="" href="{:url('ucenter/common/register',array('type'=>'mobile'))}">立即注册</a>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {include file="../../common/view/js"/}
+
+  <script type="text/javascript">
+    $(function () {
+      //登录方式切换
+      $('.nav-tabs').on('shown.zui.tab', function (e) {
+        //更改下划线位置
+        $(e.currentTarget).children('.underline').removeClass('active');
+        $(e.target).parent().children('.underline').addClass('active');
+        //更新登录类型
+        var loginType = $(e.target).data('login-type');
+        $('[name="login_type"]').val(loginType);
+
+        const userType = $(e.target).data('user-type');
+        $('[name="role"]').val(userType);
+        const placeholder = $(e.target).data('placeholder');
+        $('[name="account"]').attr('placeholder', placeholder);
+        const inputType = $(e.target).data('input-type');
+        $('[name="account"]').attr('type', inputType);
+      });
+
+      /**
+       * 登录
+       */
+      $('form').submit(function (e) {
+        e.preventDefault();
+        toast.showLoading();
+        $('form').find('div:hidden').find(':input').attr('disabled', 'disabled');
+        var self = $(this);
+        $.post(self.attr('action'), self.serialize(), success, 'json');
+        return false;
+
+        function success(data) {
+          console.log(data);
+          handle_ajax(data);
+          toast.hideLoading();
+        }
+      });
+
+      //控制密码显示/隐藏
+      $('.password-group').on('click', '.iconfont', function () {
+        let type = $(this).data('type');
+        console.log(type);
+        if (type == 'hidden') {
+          $(this).data('type', 'show');
+          $(this).html('&#xe6b1;');
+          $(this).prev().attr('type', 'text');
+        } else {
+          $(this).data('type', 'hidden');
+          $(this).html('&#xe67a;');
+          $(this).prev().attr('type', 'password');
+        }
+      });
+
+      function isEmailAvailable(emailInput) {
+        var myreg =
+          /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+        if (!myreg.test(emailInput)) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+
+      //忘记密码
+      $(document).ready(function () {
+        $('.login-method-captcha').click(function () {
+          $('#forgetpassword').hide();
+        });
+        $('.login-method-password').click(function () {
+          $('#forgetpassword').show();
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,215 @@
+{extend name="common/main"/}
+
+{block name="style"}
+<!--图片上传-->
+<script type="text/javascript" charset="utf-8" src="__STATIC__/common/lib/webuploader/js/webuploader.js"></script>
+<link href="__STATIC__/common/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+{/block}
+
+{block name="body"}
+<ol class="breadcrumb">
+	<i class="icon icon-angle-left"></i>
+	<li>
+		<a href="{:url('lists')}">Author Management</a>
+	</li>
+	<li>
+		Add/Edit Author
+	</li>
+</ol>
+
+<div class="author-edit-section edit-section">
+	<form action="" method="post" class="form-horizontal form ajax-form card" role="form" id="form1">
+
+		<input type="hidden" name="id" value="{$data['id']}">
+		<div class="form-title">
+			<h4>Add/Edit Author</h4>
+		</div>
+		<div class="form-body">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Real Name</label>
+				<div class="form-controls col-sm-8">
+					<input type="text" class="form-control" name="name" placeholder="Please enter the real name of the author" value="{$data['name']}">
+					<div class="help-block">Please enter the real name of the author</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Short Description</label>
+				<div class="form-controls col-sm-8">
+					<textarea class="form-control" rows="3" name="description" placeholder="Please enter the author description">{$data['description']}</textarea>
+					<div class="help-block">Please enter the author description</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Job Title</label>
+				<div class="form-controls col-sm-8">
+					<input type="text" class="form-control" name="professional" placeholder="Please enter the job title" value="{$data['professional']|default=''}">
+					<div class="help-block">e.g., Full Stack Engineer, Original Illustrator, etc.</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Author Type</label>
+				<div class="form-controls col-sm-8">
+					<select name="group_id" class="form-control">
+						<option value="">Please select type</option>
+						{volist name="$group" id="v"}
+						{if $data['group_id'] == $v['id']}
+						<option value="{$v['id']}" selected><b>{$v['title']}</b></option>
+						{else}
+						<option value="{$v['id']}"><b>{$v['title']}</b></option>
+						{/if}
+						{/volist}
+					</select>
+					<div class="help-block">Author Type</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Author Image</label>
+				<div class="form-controls col-sm-8">
+					{:single_image_upload('cover', $data['cover'])}
+					<div class="help-block">Recommended size: a square image of at least 600*600px</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">ID Card Photo</label>
+				<div class="form-controls col-sm-8">
+                    {:single_image_upload('avatar_card', $data['avatar_card'])}
+					<div class="help-block">Must be holding the ID card personally</div>
+					<div class="help-block">Face and information on the ID card must be clearly visible</div>
+				</div>
+			</div>
+
+			<!--关联用户-->
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Binding User</label>
+				<div class="form-controls col-sm-8" bind-user>
+					<button type="button" class="btn btn-primary choose-user-btn" role="button" data-name="chooseUserModal" data-iframe="{:url('admin/member/chooseUser')}" data-toggle="modal" data-scroll-inside="true" data-bind-api="{:url('checkBind')}" data-height="600px">Select User</button>
+					<button type="button" class="btn btn-danger" role="button" id="clearBindUser">Clear Binding</button>
+
+					<div class="choose-user clearfix" id="choose-user-cb">
+						<input type="hidden" name="uid" id="choose-user-uid" value="{$data['user_info']['uid']|default='0'}">
+                        <img src="{$data['user_info']['avatar64']|default=''}" alt="" id="choose-user-avatar" class="user-avatar">
+                        <span id="choose-user-nickname">{$data['user_info']['nickname']|default=''}</span>
+					</div>
+					<div class="help-block">Select the User to Bind</div>
+				</div>
+				<script>
+					$(function(){
+						$('#clearBindUser').click(function(){
+							$('input[name="uid"]').val('');
+							$('#choose-user-nickname').text('');
+							$('#choose-user-avatar').attr('src', '');
+						});
+					})
+				</script>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Detailed Description</label>
+				<div class="form-controls col-sm-8">
+                    {:ueditor('content', 'content', $data['content'])}
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Sort</label>
+				<div class="form-controls col-sm-8">
+					<input type="number" class="form-control" name="sort" value="{$data['sort']}" placeholder="Sort" max="255">
+					<div class="help-block">The higher the number, the higher the priority, with a maximum of 255.</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Status</label>
+				<div class="form-controls col-sm-8">
+					<div class="" style="padding-top:7px">
+						{if $data['status'] == 1}
+						<input type="radio" name="status" id="is_status-1" value="1" checked> 
+						<label class="radio-inline" for="is_status-1">Enable</label>
+						<input type="radio" name="status" id="is_status-0" value="0"> 
+						<label class="radio-inline" for="is_status-0">Disable</label>
+						<input type="radio" name="status" id="is_status--1" value="-1">
+						<label class="radio-inline" for="is_status--1"> Not Reviewed</label>
+						<input type="radio" name="status" id="is_status--2" value="-2">
+						<label class="radio-inline" for="is_status--2"> Review Not Approved</label>
+						{/if}
+						{if $data['status'] == 0}
+						<input type="radio" name="status" id="is_status-1" value="1"> 
+						<label class="radio-inline" for="is_status-1">Enable</label>
+						<input type="radio" name="status" id="is_status-0" value="0" checked> 
+						<label class="radio-inline" for="is_status-0">Disable</label>
+						<input type="radio" name="status" id="is_status--1" value="-1">
+						<label class="radio-inline" for="is_status--1"> Not Reviewed</label>
+						<input type="radio" name="status" id="is_status--2" value="-2">
+						<label class="radio-inline" for="is_status--2"> Review Not Approved</label>
+						{/if}
+						{if $data['status'] == -1}
+						<input type="radio" name="status" id="is_status-1" value="1"> 
+						<label class="radio-inline" for="is_status-1">Enable</label>
+						<input type="radio" name="status" id="is_status-0" value="0"> 
+						<label class="radio-inline" for="is_status-0">Disable</label>
+						<input type="radio" name="status" id="is_status--1" value="-1" checked>
+						<label class="radio-inline" for="is_status--1"> Not Reviewed</label>
+						<input type="radio" name="status" id="is_status--2" value="-2">
+						<label class="radio-inline" for="is_status--2"> Review Not Approved</label>
+						{/if}
+						{if $data['status'] == -2}
+						<input type="radio" name="status" id="is_status-1" value="1"> 
+						<label class="radio-inline" for="is_status-1">Enable</label>
+						<input type="radio" name="status" id="is_status-0" value="0" > 
+						<label class="radio-inline" for="is_status-0">Disable</label>
+						<input type="radio" name="status" id="is_status--1" value="-1">
+						<label class="radio-inline" for="is_status--1"> Not Reviewed</label>
+						<input type="radio" name="status" id="is_status--2" value="-2" checked>
+						<label class="radio-inline" for="is_status--2"> Review Not Approved</label>
+						{/if}
+						{if $data['status'] == -3}
+						<input type="radio" name="status" id="is_status-1" value="1">
+						<label class="radio-inline" for="is_status-1">Enable</label>
+						<input type="radio" name="status" id="is_status-0" value="0" > 
+						<label class="radio-inline" for="is_status-0">Disable</label>
+						<input type="radio" name="status" id="is_status--1" value="-1">
+						<label class="radio-inline" for="is_status--1"> Not Reviewed</label>
+						<input type="radio" name="status" id="is_status--2" value="-2">
+						<label class="radio-inline" for="is_status--2"> Review Not Approved</label>
+						{/if}
+					</div>
+				</div>
+			</div>
+			
+			<div class="{if $data['status'] == -2}form-group{else}form-group hidden{/if}" id="verifyReason">
+				<label class="col-sm-2 control-label">Rejection Reason</label>
+				<div class="form-controls col-sm-8">
+					<textarea class="form-control" rows="3" name="reason" placeholder="Please Enter the Reason for Rejection">{$data['reason']}</textarea>
+					<div class="help-block">Please Enter the Reason for Rejection</div>
+				</div>
+			</div>
+			<script>
+				$(function(){
+					$("input[type='radio']").on("click",function () {
+						if($("input[id='is_status--2']:checked").val()=="-2"){
+							$('#verifyReason').removeClass('hidden');
+						}else{
+							$('#verifyReason').addClass('hidden');
+						}
+					})
+				})
+			</script>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label"></label>
+				<div class="form-controls col-sm-8">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+{/block}
+
+{block name="script"}
+
+{/block}

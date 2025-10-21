@@ -1,0 +1,110 @@
+
+
+
+<!-- 店铺关闭状态模态框 start -->
+<div class="modal fade muu-modal" id="close-Modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h3 class="modal-title">Site Status Settings</h3>
+			</div>
+			<form action="" method="post" class="form form-horizontal ajax-form" role="form">
+				<div class="modal-body">
+					<div class="form-group clearfix">
+						<label class="control-label col-sm-2">Site Maintenance Status</label>
+						<div class="form-controls col-sm-10">
+							<div class="form-edit">
+								<label>
+									<input type="hidden" name="status" value="{$data['status']}"/>
+									<div class="switch {if $data['status'] == 1}switchOn{/if}" data-role="status" data-value="{$data['status']}"></div>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="control-label col-sm-2">Maintenance Description</label>
+						<div class="form-controls col-sm-10">
+							<textarea name="close_desc" class="form-control">{$data['close_desc']}</textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Confirm</button> 
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script>
+		$(function(){
+			//更新店铺状态
+			$('#close-Modal [data-role="status"]').click(function(e){
+				var value = $('[name="status"]').val();
+				if(value == 1){
+					$(this).removeClass('switchOn');
+					$('[name="status"]').val(0);
+				}else{
+					$(this).addClass('switchOn');
+					$('[name="status"]').val(1);
+				}
+			});
+		})
+	</script>
+</div>
+<!-- 店铺关闭状态设置模态框 end -->
+
+
+<!-- 物流查询设置模态框 start -->
+<div class="modal fade muu-modal" id="logistic-Modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h3 class="modal-title">Tracking Settings</h3>
+			</div>
+			<form action="" method="post" class="form form-horizontal ajax-form" role="form">
+				<div class="modal-body we7-form">
+					<div class="form-group">
+						<label class="col-xs-12 col-sm-3 col-md-2 control-label">Environment</label>
+						<div class="col-sm-9 col-xs-12">
+							{if isset($data['logistic']['switch']) && $data['logistic']['switch']== 1}
+							<input type="radio" name="logistic[switch]" id="logistic_switch-1" value="1" checked />
+							<label class="radio-inline" for="logistic_switch-1">Production</label>
+							<input type="radio" name="logistic[switch]" id="logistic_switch-2" value="2" />
+							<label class="radio-inline" for="logistic_switch-2">Testing</label>
+							{/if}
+							{if  isset($data['logistic']['switch']) && $data['logistic']['switch']== 2}
+							<input type="radio" name="logistic[switch]" id="logistic_switch-1" value="1" />
+							<label class="radio-inline" for="logistic_switch-1">Production</label>
+							<input type="radio" name="logistic[switch]" id="logistic_switch-2" value="2" checked />
+							<label class="radio-inline" for="logistic_switch-2">Testing</label>
+							{/if}
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-12 col-sm-3 col-md-2 control-label">Merchant ID</label>
+						<div class="col-sm-9 col-xs-12">
+							<input type="text" name="logistic[logistic_id]" class="form-control" value="{if isset($data['logistic']['logistic_id'])}{$data['logistic']['logistic_id']}{/if}" />
+							<div class="help-block">Please apply at the KDNiao official website: http://kdniao.com/reg</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-xs-12 col-sm-3 col-md-2 control-label">APIKey</label>
+						<div class="col-sm-9 col-xs-12">
+							<textarea class="form-control" rows="3" name="logistic[logistic_key]">{if isset($data['logistic']['logistic_key'])}{$data['logistic']['logistic_key']}{/if}</textarea>
+							<div class="help-block">Merchant encryption private key, provided by KDNiao. Please keep it safe and do not disclose it.</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Confirm</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- 物流查询设置模态框 end -->

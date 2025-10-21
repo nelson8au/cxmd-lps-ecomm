@@ -1,0 +1,88 @@
+-- -----------------------------
+-- 表结构 `muucmf_scoreshop_attribute`
+-- -----------------------------
+CREATE TABLE IF NOT EXISTS `muucmf_scoreshop_attribute` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `shopid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '店铺ID',
+  `pid` int(11) NOT NULL DEFAULT '0' COMMENT '上级属性',
+  `title` varchar(90) NOT NULL COMMENT '标题',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '简短描述',
+  `cover` varchar(255) NOT NULL DEFAULT '' COMMENT '封面图',
+  `sort` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态，1，正常，0，Disable，-1，已删除',
+  `create_time` int(11) unsigned NOT NULL COMMENT '创建时间',
+  `update_time` int(11) unsigned NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='自定义属性表';
+
+
+-- -----------------------------
+-- 表结构 `muucmf_scoreshop_category`
+-- -----------------------------
+CREATE TABLE IF NOT EXISTS `muucmf_scoreshop_category` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `shopid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '店铺ID',
+  `pid` int(11) unsigned NOT NULL DEFAULT '0',
+  `title` varchar(25) NOT NULL,
+  `description` varchar(180) NOT NULL DEFAULT '',
+  `cover` varchar(255) NOT NULL DEFAULT '' COMMENT '分类图片',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `sort` int(11) unsigned NOT NULL DEFAULT '0',
+  `create_time` int(11) unsigned NOT NULL COMMENT '创建时间',
+  `update_time` int(11) unsigned NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='商品分类表';
+
+
+-- -----------------------------
+-- 表结构 `muucmf_scoreshop_config`
+-- -----------------------------
+CREATE TABLE IF NOT EXISTS `muucmf_scoreshop_config` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '店铺ID',
+  `shopid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '平台店铺ID',
+  `show` text COMMENT '显示配置数据，json格式',
+  `logistic` text COMMENT '物流配置数据，json格式',
+  `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态',
+  `close_desc` varchar(255) NOT NULL DEFAULT '' COMMENT '应用关闭描述',
+  `create_time` int(11) unsigned NOT NULL COMMENT '创建时间',
+  `update_time` int(11) unsigned NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='店铺表';
+
+
+-- -----------------------------
+-- 表结构 `muucmf_scoreshop_goods`
+-- -----------------------------
+CREATE TABLE IF NOT EXISTS `muucmf_scoreshop_goods` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `shopid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '店铺ID',
+  `title` varchar(64) NOT NULL COMMENT '商品名称',
+  `cover` varchar(255) NOT NULL COMMENT '商品主图',
+  `images` varchar(255) NOT NULL DEFAULT '' COMMENT '商品图片，多图显示轮播',
+  `video` varchar(255) NOT NULL DEFAULT '' COMMENT '商品视频',
+  `description` varchar(100) NOT NULL DEFAULT '' COMMENT '商品简介',
+  `code` varchar(255) NOT NULL DEFAULT '' COMMENT '商品编码',
+  `content` text COMMENT '商品详情',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT '商品类型 0：实物1：虚拟',
+  `marking_price` int(11) NOT NULL DEFAULT '0' COMMENT '划线金额，单位：分',
+  `price` int(11) NOT NULL DEFAULT '0' COMMENT '金额，单位：分',
+  `quantity` int(11) NOT NULL DEFAULT '0' COMMENT '商品余量',
+  `category_id` int(11) NOT NULL DEFAULT '0' COMMENT '分类ID',
+  `attribute_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '筛选值ID',
+  `position` varchar(64) NOT NULL DEFAULT '' COMMENT '商品定位',
+  `view` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '浏览量',
+  `f_view` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '虚拟浏览量',
+  `sales` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '已出售量',
+  `f_sales` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '虚拟购买量',
+  `favorites` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '收藏数量',
+  `f_favorites` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '虚拟收藏量',
+  `sku` text COMMENT '产品sku规格json格式',
+  `sort` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
+  `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `create_time` int(11) unsigned NOT NULL COMMENT '创建时间',
+  `update_time` int(11) unsigned NOT NULL COMMENT '更新时间',
+  `reason` varchar(255) NOT NULL DEFAULT '' COMMENT '审核拒绝原因',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态，-1：删除；0：下架；1：上架',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='商品信息';
+

@@ -1,0 +1,243 @@
+{extend name="../../admin/view/common/main"/}
+
+{block name="style"}
+<link href="__ADMIN_CSS__/main.min.css" type="text/css" rel="stylesheet">
+<!--图片上传-->
+<script type="text/javascript" charset="utf-8" src="__STATIC__/common/lib/webuploader/js/webuploader.js"></script>
+<link href="__STATIC__/common/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+{/block}
+
+{block name="body"}
+<ol class="breadcrumb">
+	<li>
+		<a href="{:url('index')}">Basic Configuration</a>
+	</li>
+	<li>
+		Basic Configuration
+	</li>
+</ol>
+<div class="config-section">
+	<div class="config-list-section">
+		<div class="form-files-box card">
+			<!-- Basic Settings
+ start -->
+			<div class="form-file header">Basic Settings
+</div>
+			<div class="form-files">
+	
+				<!-- 店铺打烊 start -->
+				<div class="form-file">
+					<div class="form-label">Module Status</div>
+					<div class="form-value">
+						<span class="margin-left">
+							{$data['status_str']}
+						</span>
+						<span class="margin-left">
+							Enable/Disable the Module
+						</span>
+						
+					</div>
+					<div class="form-edit">
+						<button type="button" data-toggle="modal" data-target="#close-Modal" class="btn btn-primary">Settings</button>
+					</div>
+				</div>
+				<!-- 店铺打烊 end -->
+
+				<!--物流查询设置-->
+				<div class="form-file">
+					<div class="form-label">Tracking Settings</div>
+					<div class="form-value">
+						<span class="title margin-left">
+							{if empty($data['logistic']['switch'])}Unset
+
+
+
+
+
+{else}Set{/if}
+						</span>
+						<span class="description margin-left">
+							Tracking Query Interface Parameters Settings
+						</span>
+					</div>
+					<div class="form-edit">
+						<button type="button" data-toggle="modal" data-target="#logistic-Modal" class="btn btn-primary">Settings</button>
+					</div>
+				</div>
+				<!--物流查询设置 END-->
+			</div>
+		</div>
+
+		<div class="form-files-box card">
+			<!-- 显示设置 start -->
+			<div class="form-file header">Visable Settings</div>
+			<div class="form-files">
+	
+				<!-- 阅读量 start -->
+				<div class="form-file">
+					<div class="form-label">Show View Count</div>
+					<div class="form-value">
+						<span class="title margin-left">
+							{$data.show.view_str}
+						</span>
+						<span class="description margin-left">
+							View Count Show/Hide Setting
+						</span>
+					</div>
+					<div class="form-edit">
+						<label>
+							<div class="switch {if $data['show']['view'] == 1}switchOn{/if}" data-role="show_view" data-value="{$data['show']['view']}" data-url="{:url()}"></div>
+						</label>
+					</div>
+				</div>
+				<!-- 阅读量 end -->
+
+				<div class="form-file">
+					<div class="form-label">Show Purchase Quantity</div>
+					<div class="form-value">
+						<span class="title margin-left">
+							{$data.show.sale_str}
+						</span>
+						<span class="description margin-left">
+							Purchase Quantity Show/Hide Setting
+						</span>
+					</div>
+					<div class="form-edit">
+						<label>
+							<div class="switch {if $data['show']['sale'] == 1}switchOn{/if}" data-role="show_sale" data-value="{$data['show']['sale']}" data-url="{:url()}"></div>
+						</label>
+					</div>
+				</div>
+
+				<div class="form-file">
+					<div class="form-label"> Show Favorites Count</div>
+					<div class="form-value">
+						<span class="title margin-left">
+							{$data.show.favorites_str}
+						</span>
+						<span class="description margin-left">
+							Favorites Count Show/Hide Setting
+						</span>
+					</div>
+					<div class="form-edit margin-left">
+						<label>
+							<div class="switch {if $data['show']['favorites'] == 1}switchOn{/if}" data-role="show_favorites" data-value="{$data['show']['favorites']}" data-url="{:url()}"></div>
+						</label>
+					</div>
+				</div>
+
+				<div class="form-file">
+					<div class="form-label">Show Original Price</div>
+					<div class="form-value">
+						<span class="title margin-left">
+							{if $data.show.marking_price == 1}
+							Show
+							{else /}
+							Hide
+							{/if}
+						</span>
+						<span class="description margin-left">
+							Original Price Show/Hide Setting
+						</span>
+					</div>
+					<div class="form-edit">
+						<label>
+							<div class="switch {if $data['show']['marking_price'] == 1}switchOn{/if}" data-role="show_marking_price" data-value="{$data['show']['marking_price']}" data-url="{:url()}"></div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{include file="admin/config/_modal"/}
+
+
+{/block}
+{block name="script"}
+<script src="__ADMIN_JS__/main.min.js"></script>
+<script>
+	$(function(){
+		//更新是否显示阅读量
+		$('[data-role="show_view"]').click(function(e){
+
+			var value = $(this).data('value');
+			if(value == 1){
+				value = 0;
+			}else{
+				value = 1;
+			}
+			var url = $(this).data('url');
+			var data = {
+				'show[view]' : value,
+			};
+
+			$.post(url, data, function (a) {
+				//console.log(a);
+				handle_ajax(a);
+			});
+		});
+
+		//更新是否显示订阅量
+		$('[data-role="show_sale"]').click(function(e){
+
+			var value = $(this).data('value');
+			if(value == 1){
+				value = 0;
+			}else{
+				value = 1;
+			}
+			var url = $(this).data('url');
+			var data = {
+				'show[sale]' : value,
+			};
+
+			$.post(url, data, function (a) {
+				//console.log(a);
+				handle_ajax(a);
+			});
+		});
+
+		//更新是否显示收藏量
+		$('[data-role="show_favorites"]').click(function(e){
+
+			var value = $(this).data('value');
+			if(value == 1){
+				value = 0;
+			}else{
+				value = 1;
+			}
+			var url = $(this).data('url');
+			var data = {
+				'show[favorites]' : value,
+			};
+
+			$.post(url, data, function (a) {
+				handle_ajax(a);
+			});
+		});
+
+
+		//更新是否显示划线价格
+		$('[data-role="show_marking_price"]').click(function(e){
+
+			var value = $(this).data('value');
+			if(value == 1){
+				value = 0;
+			}else{
+				value = 1;
+			}
+			var url = $(this).data('url');
+			var data = {
+				'show[marking_price]' : value,
+			};
+
+			$.post(url, data, function (a) {
+				//console.log(a);
+				handle_ajax(a);
+			});
+		});
+	});
+	</script>
+{/block}

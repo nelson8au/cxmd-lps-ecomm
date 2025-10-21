@@ -1,0 +1,88 @@
+
+<div class="withdraw-detail">
+    <div class="user-info">
+        {if !empty($v.uid) && !empty($v.user_info) && is_array($v.user_info)}
+        <div class="cover">
+            <img src="{$data['user_info']['avatar64']}">
+        </div>
+        <div class="info">
+            <div class="title text-ellipsis">{$data['user_info']['nickname']}</div>
+        </div>
+        {else}
+        User does not exist
+        {/if}
+    </div>
+    
+    <table class="table table-bordered muu-table">
+        <tbody>
+        <tr>
+            <tr>
+                <td>
+                    Channel
+                </td>
+                <td>
+                    <span class="text-info">{$data['channel_str']}</span>
+                </td>
+            </tr>
+            <td>
+                Withdrawal Amount
+            </td>
+            <td>
+                <span class="text-danger">￥ {$data['price']}</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Amount Credited
+            </td>
+            <td>
+                <span class="text-danger">￥ {$data['real_price']}</span>
+            </td>
+        </tr>
+    
+        <tr>
+            <td style="width: 300px">
+                Application Time
+            </td>
+            <td>
+                {$data['create_time_str']}
+            </td>
+        </tr>
+    
+        <tr>
+            <td style="width: 300px">
+                Completion Time
+            </td>
+            <td>
+                {if $data['paid'] == 1 && $data['error'] == 0}
+                <span class="text-success">{$data['paid_time_str']}</span>
+                {else}
+                <span class="paid-status text-danger">（{$data['error_str']}）</span>
+                {/if}
+            </td>
+        </tr>
+    
+        <tr>
+            <td style="width: 300px">
+                Status
+            </td>
+            <td>
+                {if $data['paid'] == 1 && $data['error'] == 0}
+                    <span class="paid-status text-success">{$data['paid_str']}</span>
+                    <span class="paid-status text-success">（{$data['error_str']}）</span>
+                {else}
+                    <span class="paid-status text-danger">（{$data['error_str']}）</span>
+                {/if}
+            </td>
+        </tr>
+        {if $data['paid'] == 0 && $data['error'] == 1}
+            <td style="width: 300px">
+                Failure Reason
+            </td>
+            <td>
+                {$data['error_msg']['return_msg']|default=''}
+            </td>
+        {/if}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,198 @@
+<link href="__COMMON__/lib/webuploader/css/webuploader.css" rel="stylesheet" type="text/css"/>
+<!-- 数据表单 -->
+<div class="knowledge-form form-box">
+    
+    <form class="form-horizontal category-form" role="form" action="{:url('')}" method="post">
+        <input type="hidden" name="id" value="{$data.id}">
+        
+        <div class="form-group">
+            <label class="col-xs-2">Category Name</label>
+            <div class="col-xs-8">
+                <input type="text" class="form-control input-dm" name="title" placeholder="请输入分类标题" value={$data.title}>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2">Parent Category</label>
+            <div class="col-xs-8">
+                
+                <select class="form-control" name="pid">
+                    <option value="0">As Parent Category</option>
+                    {volist name="category" id="vo"}
+                    <option value="{$vo.id}" {eq name="vo.id" value="$pid"}selected{/eq}>{$vo.title}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-xs-2">Short Description</label>
+            <div class="col-xs-8">
+                <textarea class="form-control input-dm" rows="3" name="description" placeholder="Please Enter Category Description">{$data.description}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-xs-2">Cover</label>
+            <div class="col-xs-8">
+                <div class="cover-box row clearfix">
+                    <input type="hidden" value="{$data.cover}" name="cover" id="category_cover_id" />
+                    <div class="col-xs-6">
+                        <div class="upload-img-box category-upload-img-box">
+                            {if condition="$data['cover']"}
+                                <img src="{$data.cover|get_cover='path'}" class="img-responsive">
+                            {else/}
+                                <img src="__IMG__/cover.png" class="img-responsive">
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="webuploader-box">
+                            <div id="uploadimg">
+                                <div id="categoryImgPicker" class="btn btn-warning cover-upload-btn">Upload Image</div>
+                            </div>
+                            <span class="tip">The recommended size for the cover：300*300px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-xs-2">Status Settings
+</label>
+            <div class="col-xs-8">
+                <div class="icheck-radio">
+                    <input type="radio" name="status" id='status1' value="1" checked>
+                    <label for="status1">Enable</label>
+                </div>
+                
+                <div class="icheck-radio">
+                    <input type="radio" id='status0' name="status" value="0">
+                    <label for="status0">Disable</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-xs-2"></label>
+            <div class="col-xs-10">
+                <button type="button" data-role="category_submit" class="btn btn-lg btn-success">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
+
+<script>
+$(function(){
+    // 初始化Web Uploader
+    var uploader = WebUploader.create({
+        // 选完文件后，是否自动上传。
+        auto: true,
+        // swf文件路径
+        swf: '__COMMON__/lib/webuploader/js/Uploader.swf',
+        // 文件接收服务端。
+        server: "{:url('api/file/uploadPicture')}",
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: '#categoryImgPicker',
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png'
+        }
+    });
+
+    // 当有文件添加进来的时候
+    uploader.on( 'fileQueued', function( file ) {
+        uploader.upload();
+    });
+    
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader.on( 'uploadSuccess', function( file,data ) {
+        //单图上传直接拿第一个
+        var data = data.data[0];
+
+        $( '#'+file.id ).addClass('upload-state-done');
+        //var data = $.parseJSON(data);
+        $('.category-form #category_cover_id').val(data.id);
+        $('.category-form .category-upload-img-box').html('<img src="'+data.path+'"/>');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+        $error.text('Upload error');
+    });
+});
+
+$(function(){
+
+    $('button[data-role="category_submit"]').click(function(e){
+        e.preventDefault();
+        var query = $('.form-horizontal.category-form').serialize();
+        var url=$('.form-horizontal.category-form').attr('action');
+        
+        //判断是在什么场景下提交，分两种情况，一是分类列表页内提交，二是在课程发布表单页提交（给个ID来区分两种场景）
+        if($('#formAdd').length > 0 ){
+            $.post(url,query,function(msg){
+                if(msg.code){
+                    //console.log(msg);
+                    toast.success(msg.msg);
+                    //请求接口获取新分类数据
+                    $.get('{:url("knowledge/Api/categoryTree")}',function(category_json){
+                        //console.log(category_json);
+                        if(category_json.code){
+                            //关闭对话框
+                            $('#formAdd .close').click();
+                            choose_upload(category_json.data);
+                        }
+
+                    });
+                }else{
+                    handleAjax(msg);
+                }
+            },'json');
+        }else{
+            //
+            $.post(url,query,function(msg){
+                if(msg.code){
+                    toast.success('Success！');
+                    setTimeout(function(){
+                        window.location.href=msg.url;
+                    },1500);
+                }else{
+                    handleAjax(msg);
+                }
+            },'json');
+        }   
+    });
+
+    //更新分类DOM
+    function choose_upload(data){
+        var html_str = '<option value=""></option>';
+
+        $.each(data,function(i,n){
+            html_str += '<option value="'+n.id+'">'+n.title+'</option>';
+            
+            if(typeof(n._child) != 'undefined'){
+                console.log(typeof(n._child));
+                $.each(n._child,function(l,m){
+                    html_str += '<option value="'+m.id+'">----'+m.title+'</option>';
+                })
+            }
+        });
+        //更新原始dom
+        $('.chosen-select').html(html_str);
+        //更新chosen
+        $('select.chosen-select').trigger('chosen:updated');
+    }
+
+});
+</script>

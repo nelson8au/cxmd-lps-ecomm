@@ -1,0 +1,198 @@
+{extend name="common/main"/}
+
+{block name="body"}
+    <div class="main-title cf">
+        <h2>
+            Add/Edit Action Rule
+        </h2>
+    </div>
+    <!-- 表单 -->
+    <div class="with-padding">
+        <form id="form" action="{:url()}" method="post" class="form-horizontal">
+            <div class="form-item builder_item">
+                <label class="item-label">Action Identifier<span class="check-tips">(Enter action identifier in English letters)</span></label>
+
+                <div class="controls">
+                    <input type="text" class="text input-large form-control form-input-width" name="name" value="{$data.name}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Action Name<span class="check-tips">(Enter Action Name)</span></label>
+
+                <div class="controls">
+                    <input type="text" class="text input-large form-control form-input-width" name="title" value="{$data.title}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Action Type<span class="check-tips">(Select Action Type)</span></label>
+
+                <div class="controls">
+                    <select name="type" class=" form-control form-select-size">
+                        {volist name=":get_action_type(null,true)" id="vo"}
+                            <option value="{$key}">{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-item builder_item">
+                <label class="item-label">Module<span class="check-tips">(Select Module)</span></label>
+
+                <div class="controls">
+                    <select name="module" class=" form-control form-select-size">
+                        <option value="">System</label>
+                        {volist name="modules" id="vo"}
+                        {if $vo['name'] == $data['module']}
+                        <option value="{$vo.name}" selected>{$vo.alias}</option>
+                        {else}
+                        <option value="{$vo.name}">{$vo.alias}</option>
+                        {/if}
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-item builder_item">
+                <label class="item-label">Action Description<span class="check-tips">(Enter Action Description)</span></label>
+
+                <div class="controls">
+                    <textarea name="remark" class=" form-control form-text-area-size">{$data.remark}</textarea>
+                </div>
+            </div>
+
+            <div class="form-item builder_item">
+                <label class="item-label">Score Rule<span class="check-tips">(Enter score rule, leave blank to only record logs)</span></label>
+
+                <div class="controls action_rule">
+
+                    {php}if(empty($data['rule'])){{/php}
+                        No Rules Available
+                    {php}}{/php}
+
+                    <div class="clearfix">
+                        <div class="pull-left text-center" style="width: 100px">
+                           Table Name
+                        </div>
+                        <div class="pull-left text-center" style="width: 100px">
+                           Score Type
+                        </div>
+                        <div class="pull-left text-center" style="width: 100px">
+                           Score Operation
+                        </div>
+                        <div class="pull-left text-center" style="width: 100px">
+                           Period (hours)
+                        </div>
+                        <div class="pull-left text-center" style="width: 100px">
+                           Maximum Limit Count
+                        </div>
+                    </div>
+                    {volist name="data['rule']" id="rule"}
+                        <div style="margin-bottom: 10px">
+                            <input class="form-control" name="action_rule[table][]" value="{$rule.table}"
+                                   title="Table to Execute, default is member" style="width: 100px;display: inline-block">
+                            <select class="form-control" name="action_rule[field][]" title="Score to Execute"
+                                    style="width: 100px;display: inline-block">
+                                <option value="0">Please Select</option>
+                                {volist name="score" id="s"}
+                                {if condition="$s['id'] eq $rule['field']"}
+                                <option value="{$s.id}" selected>
+                                    {$s.title}
+                                </option>
+                                {else}
+                                <option value="{$s.id}">
+                                    {$s.title}
+                                </option>
+                                {/if}
+                                    
+                                {/volist}
+                            </select>
+                            <input type="text" name="action_rule[rule][]" title="Score Operation, negative values indicate deduction of points" value="{$rule.rule}"
+                                   class=" form-control" style="width: 100px;display: inline-block"/>
+                            <input class="form-control" name="action_rule[cycle][]" title="Period" value="{$rule.cycle}"
+                                   style="width: 100px;display: inline-block">
+                            <input class="form-control" name="action_rule[max][]" title="Maximum Limit" value="{$rule.max}"
+                                   style="width: 100px;display: inline-block">
+                            <a href="javascript:" data-role="del_rule">Delete Rule</a>
+                        </div>
+                    {/volist}
+                </div>
+                <a href="javascript:" data-role="add_rule">Add Rule</a>
+            </div>
+
+            <div class="form-item builder_item">
+                <label class="item-label">
+                    Rule Log
+                    <span class="check-tips">
+                        (When recording log remarks, follow this rule to generate, supports [variables|functions]. Current variables include: user, time, model, record, data)
+                    </span>
+                </label>
+
+                <div class="controls">
+                    <textarea name="log" class=" form-control form-text-area-size">{$data.log}</textarea>
+                </div>
+            </div>
+
+            <div class="form-item builder_item">
+                <input type="hidden" name="id" value="{$data.id}"/>
+                <button type="submit" class="btn btn-success submit-btn ajax-post" target-form="form-horizontal">Confirm</button>
+                <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">Back</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div id="rule_list" style="display: none">
+        <div style="margin-bottom: 10px">
+            <input class="form-control" name="action_rule[table][]" value="member" title="Table to Execute, default is member" style="width: 100px;display: inline-block">
+            <select class="form-control" name="action_rule[field][]" title="Score to Execute" style="width: 100px;display: inline-block">
+                <option value="0">Please Select</option>
+                {volist name="score" id="s"}
+                    <option value="{$s.id}">{$s.title}</option>
+                {/volist}
+            </select>
+            <input type="text" name="action_rule[rule][]" title="Score Operation, negative values indicate deduction of points。" value="0" class=" form-control"
+                   style="width: 100px;display: inline-block"/>
+            <input class="form-control" name="action_rule[cycle][]" title="Period (hours)" value="24"
+                   style="width: 100px;display: inline-block">
+            <input class="form-control" name="action_rule[max][]" title="Maximum Limit(Times)" value="1"
+                   style="width: 100px;display: inline-block">
+            <a href="javascript:" data-role="del_rule">删除规则</a>
+        </div>
+    </div>
+{/block}
+
+{block name="script"}
+    <script type="text/javascript" charset="utf-8">
+        Think.setValue('type', {$data.type|default = 1});
+    </script>
+
+    <script>
+        $(function () {
+            rebind();
+        })
+
+        var rebind = function () {
+            add_rule();
+            del_rule();
+        }
+        var add_rule = function () {
+
+            $('[data-role="add_rule"]').unbind('click');
+            $('[data-role="add_rule"]').click(function () {
+                $('.action_rule').append($('#rule_list').html())
+                rebind();
+            })
+
+        }
+
+        var del_rule = function () {
+            $('[data-role="del_rule"]').unbind('click');
+            $('[data-role="del_rule"]').click(function () {
+                $(this).closest('div').remove();
+                rebind();
+            })
+        }
+
+    </script>
+{/block}

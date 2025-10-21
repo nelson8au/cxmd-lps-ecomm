@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-xs-9">
+    <!--分类下拉框-->
+    <link href="__ZUI__/lib/chosen/chosen.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="__ZUI__/lib/chosen/chosen.min.js"></script>
+    {notempty name="brands"}
+    <select data-placeholder="Please Select" class="chosen-select form-control" name="brand_id" tabindex="2">
+      <option value=""></option>
+      {volist name="brands" id="brand"}
+      <option value="{$brand.id}" {if isset($data['brand_id']) && $brand.id==$data['brand_id']}selected{/if}>
+        <b>{$brand.name_en}</b>
+      </option>
+      {/volist}
+    </select>
+    {else /}
+    <select data-placeholder="No Select Option" class="chosen-select form-control" name="brand_id" tabindex="2">
+    </select>
+    {/notempty}
+    <script>
+      $(function () {
+        $('select.chosen-select').chosen({
+          no_results_text: 'Not Found',    // 当检索时没有找到匹配项时显示的提示文本
+          disable_search_threshold: 8, // n个以下的选择项则不显示检索框
+          search_contains: true,         // 从任意位置开始检索
+          allow_single_deselect: true,
+          search_contains: true,
+        });
+      })
+    </script>
+  </div>
+</div>

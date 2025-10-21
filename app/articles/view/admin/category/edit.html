@@ -1,0 +1,88 @@
+{extend name="../../admin/view/common/main"/}
+{block name="style"}
+<!--图片上传-->
+<script type="text/javascript" charset="utf-8" src="__STATIC__/common/lib/webuploader/js/webuploader.js"></script>
+<link href="__STATIC__/common/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+<link href="__ADMIN_CSS__/main.min.css" type="text/css" rel="stylesheet">
+{/block}
+
+{block name="body"}
+<ol class="breadcrumb">
+	<i class="icon icon-angle-left"></i>
+	<li>
+		<a href="{:url('category/lists')}">Category Management</a>
+	</li>
+	<li>
+		Add/Edit Category
+	</li>
+</ol>
+<form action="" method="post" class="form form-horizontal ajax-form card" id="form1">
+	<input type="hidden" name="title" class="form-control" value="{$category_data['id']}" />
+	<!--显示父级分类-->
+	<div class="form-title">
+		<h4>Add/Edit Category</h4>
+	</div>
+	<div class="form-body">
+		{if !empty($pid)}
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Parent Category</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" class="form-control" value="{$parent['title']}" readonly />
+				<input type="hidden" name="pid" value="{$pid}" />
+			</div>
+		</div>
+		{/if}
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Category Name</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="title" class="form-control" value="{$category_data['title']}" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Category Image</label>
+			<div class="form-controls col-sm-8">
+                {:single_image_upload('cover', $category_data['cover'])}
+				<div class="help-block">Recommended size: 300x300px, aspect ratio of 1:1, supports jpg, png</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Sort</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="sort" class="form-control" value="{$category_data['sort']}"/>
+				<div class="help-block">The larger the number, the higher the priority.</div>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Status</label>
+			<div class="form-controls radio-controls col-sm-8">
+				{if $category_data['status'] == 1 || empty($category_data['id'])}
+				<input type="radio" name="status" id="is_status-1" value="1" checked> 
+				<label class="radio-inline" for="is_status-1">Enable</label>
+				<input type="radio" name="status" id="is_status-0" value="0">
+				<label class="radio-inline" for="is_status-0"> Disable</label>
+				{else}
+				<input type="radio" name="status" id="is_status-1" value="1"> 
+				<label class="radio-inline" for="is_status-1">Enable</label>
+				<input type="radio" name="status" id="is_status-0" value="0" checked>
+				<label class="radio-inline" for="is_status-0"> Disable</label>
+				{/if}
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label"></label>
+			<div class="form-controls col-sm-8">
+				<input type="submit" name="submit" value="Submit" class="btn btn-primary" />
+			</div>
+		</div>
+	</div>
+</form>
+{/block}
+
+{block name="script"}
+<script src="__JS__/main.min.js"></script>
+{/block}

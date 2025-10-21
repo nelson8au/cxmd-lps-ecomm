@@ -1,0 +1,460 @@
+{extend name="../../admin/view/common/main"/}
+{block name="style"}
+{include file="admin/common/base"}
+{/block}
+{block name='body'}
+<ol class="breadcrumb">
+  <i class="icon icon-angle-left"></i>
+  <li>
+    <a href="{:url('lists')}">Order Management</a>
+  </li>
+  <li>
+    Order List
+  </li>
+</ol>
+
+<div class="search-box clearfix row margin-bottom">
+  <form action="" method="get" class="search-form" role="form">
+    <div class="col-sm-2">
+      <select name="search_type" class="form-control margin-right">
+        {if $search_type == 'order_no'}
+        <option selected value="order_no">Order No.</option>
+        <option value="product_title">Product Title</option>
+        <option value="uid">uid</option>
+        {/if}
+        {if $search_type == 'product_title'}
+        <option value="order_no">Order No.</option>
+        <option selected value="product_title">Product Title</option>
+        <option value="uid">uid</option>
+        {/if}
+        {if $search_type == 'uid'}
+        <option value="order_no">Order No.</option>
+        <option value="product_title">Product Title</option>
+        <option selected value="uid">uid</option>
+        {/if}
+      </select>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group">
+        <div class="input-control search-box has-icon-left has-icon-right">
+          <input type="hidden" name="status" value="{$status}" />
+          <input class="form-control" name="keyword" placeholder="Order No./Product Title/UserID" type="text" value="{$keyword}">
+          <label class="input-control-icon-left search-icon"><i class="icon icon-search"></i></label>
+        </div>
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </span>
+      </div>
+    </div>
+  </form>
+  <div class="col-sm-3">
+    <form action="{:url('/api/ScoreshopGood/exportCsv')}" method="post">
+      <div class="input-group">
+        <span class="input-group-btn">
+          <input class="form-control" name="from_date" placeholder="From" type="date" value="<?php echo date('Y-m-d', strtotime('-1 month')) ?>" />
+        </span>
+        <span class="input-group-btn">
+          <button class="btn" type="button" disabled>to</button>
+        </span>
+        <span class="input-group-btn">
+          <input class="form-control" name="to_date" placeholder="To" type="date" value="<?php echo date('Y-m-d') ?>" />
+        </span>
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="submit">Export CSV</button>
+        </span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="{if $status==='all' && $refund == 'all'}active{/if}"><a href="{:url('lists', ['status' => 'all'])}">ALL</a>
+  </li>
+  <li class="{if $status==='2'}active{/if}"><a href="{:url('lists', ['status'=>2])}">Pending Shipment</a></li>
+  <li class="{if $status==='3'}active{/if}"><a href="{:url('lists', ['status'=>3])}">Pending Receipt</a></li>
+  <li class="{if $status==='4'}active{/if}"><a href="{:url('lists', ['status'=>4])}">Pending Review</a></li>
+  <li class="{if $status==='5'}active{/if}"><a href="{:url('lists', ['status'=>5])}">Completed</a></li>
+</ul>
+
+<div class="orders-lists card">
+  {notempty name="lists.data"}
+  {foreach $lists.data as $k=>$v}
+  <div class="order-lists-item">
+    <div class="base-info">
+      <span class="">Order No.：{$v['order_no']}</span>
+      {if $v['paid'] == 1}
+      <span class="">
+        Payment Time: {$v['paid_time_str']}
+      </span>
+      {else}
+      <span class="">
+        Create Time：{$v['create_time_str']}
+      </span>
+      {/if}
+      <span class="">
+        User：
+        {if is_array($v['user_info']) && !empty($v['user_info'])}
+        <a href="{:url('admin/member/detail',['uid' => $v['uid']])}">
+          {$v['user_info']['nickname']}
+        </a>
+        {else /}
+        The user has been deleted
+        {/if}
+      </span>
+      <span class="pull-right text-right">
+
+      </span>
+    </div>
+    <table class="table table-bordered muu-table">
+      <thead>
+        <tr>
+          <th>Product Information</th>
+          <th>Unit Price</th>
+          <th>Quantity</th>
+          <th>Points Paid</th>
+          <th>Order Status</th>
+          <th width=265></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>
+            <div class="cover">
+              <img src="{$v['products']['cover_100']}">
+            </div>
+            <div class="info">
+              <div class="title text-ellipsis">{$v['products']['title']}</div>
+              <div class="description text-ellipsis">{$v['products']['description']}</div>
+            </div>
+          </td>
+          <td>
+            {$v['products']['price']}
+          </td>
+          <td>
+            {$v['products']['quantity']}
+          </td>
+          <td>
+            {$v['paid_fee']}
+          </td>
+          <td>
+            <div class="status status-{$v['status']}">
+              {$v['status_str']}
+            </div>
+          </td>
+          <td>
+            <a href="{:url('detail',array('id'=>$v['id']))}" class="btn btn-info">Details</a>
+
+            {if $v['status'] == 2}
+            {if $v['products']['express'] == 1}
+            <button type="button" data-toggle="modal" data-target="#deliveType0Modal" class="btn btn-primary"
+              data-id="{$v['id']}">Ship</button>
+            {/if}
+            {if $v['products']['express'] == 0}
+            <button type="button" data-toggle="modal" data-target="#deliveType1Modal" class="btn btn-primary"
+              data-id="{$v['id']}">Ship</button>
+            {/if}
+
+            <a href="{:url('status',['id'=>$v['id'],'status'=>0])}" class="btn btn-danger ajax-get"
+              data-confirm="Are your sure you want to cancel the order?">Cancel Order</a>
+            {/if}
+            {if $v['status'] == 3}
+            {if $v['products']['express'] == 1}
+            <a data-url="{:url('logistic',['id'=>$v['id']])}" data-id="{$v['id']}" data-toggle="modal"
+              data-target="#logisticModal" class="btn btn-primary">Track Logistics</a>
+            {/if}
+            {if $v['products']['express'] == 0}
+            <a data-url="{:url('detail',['id'=>$v['id']])}" data-id="{$v['id']}" data-toggle="modal"
+              data-target="#sendOutModal" class="btn btn-primary">Shipping Info.</a>
+            {/if}
+
+            <a href="{:url('status',['id'=>$v['id'],'status'=>4])}" data-id="{$v['id']}"
+              class="btn btn-warning confirm ajax-post" data-confirm="Confirm and execute the user receipt operation!">Confirm Receipt</a>
+            {/if}
+
+            {if $v['status'] == 4}
+            {if $v['products']['express'] == 1}
+            <a data-url="{:url('logistic',['id'=>$v['id']])}" data-id="{$v['id']}" data-toggle="modal"
+              data-target="#logisticModal" class="btn btn-primary">Track Logistics</a>
+            {/if}
+            {if $v['products']['express'] == 0}
+            <a data-url="{:url('detail',['id'=>$v['id']])}" data-id="{$v['id']}" data-toggle="modal"
+              data-target="#sendOutModal" class="btn btn-primary">Shipping Info.</a>
+            {/if}
+            {/if}
+
+            {if $v['status'] == 0}
+            <a disabled href="#" class="btn disabled">Cancelled</a>
+            <a href="{:url('status',['id'=>$v['id'],'status'=>-1])}" class="btn btn-danger ajax-get"
+              data-confirm="Are you sure you want to delete this?">Delete</a>
+            {/if}
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {/foreach}
+  {else /}
+  {include file='admin/common/_empty'}
+  {/notempty}
+</div>
+<div class="page-section">
+  {:html_entity_decode($pager)}
+</div>
+
+<!--实物商品发货模态框-->
+<div class="modal fade" id="#deliveType0Modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">×</span></button>
+        <h3 class="modal-title">Order Shipment</h3>
+      </div>
+      <form action="{:url('delive')}" method="post" class="form-horizontal ajax-form" role="form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">Select a Courier</label>
+            <div class="col-sm-9 col-xs-12">
+              <select class="form-control" name="ShipperValue">
+                {foreach $shipper_list as $key=>$vo}
+                <option value="{$vo},{$key}">{$vo}</option>
+                {/foreach}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">Tracking No.</label>
+            <div class="col-sm-9 col-xs-12">
+              <input type="text" name="LogisticCode" class="form-control"
+                value="{if isset($data['logistic']['id'])}{$data['logistic']['id']}{/if}" />
+              <div class="help-block"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <input type="hidden" name="id" value="0" />
+          <input type="hidden" name="submit" value="submit" />
+          <button type="submit" class="btn btn-primary">Confirm</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--实物发货物流查询模态框-->
+<!--发货模态框-->
+<div class="modal fade" id="deliveType0Modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">×</span></button>
+        <h3 class="modal-title">Order Shipment</h3>
+      </div>
+
+      <form action="{:url('delive')}" method="post" class="form-horizontal form ajax-form" role="form">
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">Select a Courier</label>
+            <div class="col-sm-9 col-xs-12">
+              <select class="form-control" name="ShipperValue">
+                {foreach $shipper_list as $key=>$vo}
+                <option value="{$vo},{$key}">{$vo}</option>
+                {/foreach}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">Tracking No.</label>
+            <div class="col-sm-9 col-xs-12">
+              <input type="text" name="LogisticCode" class="form-control"
+                value="{if isset($data['logistic']['id'])}{$data['logistic']['id']}{/if}" />
+              <div class="help-block"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <input type="hidden" name="id" value="0" />
+          <input type="hidden" name="type" value="0">
+          <input type="hidden" name="submit" value="submit" />
+          <button type="submit" class="btn btn-primary">Confirm</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!--虚拟商品发货模态框-->
+<div class="modal fade" id="deliveType1Modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">×</span></button>
+        <h3 class="modal-title">Virtual Goods Shippment</h3>
+      </div>
+
+      <form action="{:url('delive')}" method="post" class="form-horizontal form ajax-form" role="form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">Shipping Details</label>
+            <div class="col-sm-9 col-xs-12">
+              <textarea class="form-control" rows="8" name="content" placeholder="Please Enter Shipping Details"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <input type="hidden" name="id" value="0" />
+          <input type="hidden" name="type" value="1">
+          <input type="hidden" name="submit" value="submit" />
+          <button type="submit" class="btn btn-primary">Confirm</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!--物流查询模态框-->
+<div class="modal fade" id="logisticModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">×</span></button>
+        <h3 class="modal-title">Track Logistics</h3>
+      </div>
+      <div class="modal-body we7-form">
+        <div class="kdniao_delivery_main">
+          <div class="base_info">
+          </div>
+          <div class="api_info">
+            <p>【Order No.】：<span class="kdniao_OrderCode"></span></p>
+            <p>【Courier】：<span class="kdniao_shipperName"></span><span class="kdniao_shipperCode"></span></p>
+            <p>【Tracking No.】：<span class="kdniao_logisticCode"></span></p>
+            <div class="kdniao_delivery_info">
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--虚拟商品发货信息查询模态框-->
+<div class="modal fade" id="sendOutModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">×</span></button>
+        <h3 class="modal-title">Shipping Info. Details</h3>
+      </div>
+      <div class="modal-body">
+        <div class="delivery_info">
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
+{block name='script'}
+<script>
+  $(function () {
+    //模态框ID赋值
+    $('[data-target="#deliveType0Modal"]').click(function () {
+      var id = $(this).data('id');
+      $('#deliveType0Modal input[name="id"]').val(id);
+    });
+
+    $('[data-target="#deliveType1Modal"]').click(function () {
+      var id = $(this).data('id');
+      $('#deliveType1Modal input[name="id"]').val(id);
+    });
+  });
+
+  $(function () {
+    //实物商品发货物流查询
+    $('[data-target="#logisticModal"]').click(function () {
+      var _this = $(this);
+      var url = _this.data('url');
+      var id = _this.data('id');
+      var data = {
+        id: id
+      };
+      $.post(url, data, function (ret) {
+        //console.log(ret);
+        if (ret.code) {
+          $('.kdniao_OrderCode').text(ret.data.OrderCode);
+          $('.kdniao_shipperName').text(ret.data.ShipperName);
+          $('.kdniao_shipperCode').text(ret.data.ShipperCode);
+          $('.kdniao_logisticCode').text(ret.data.LogisticCode);
+
+          if (ret.data.Traces) {
+            var _html = '<ul class="list-group">';
+            $.each(ret.data.Traces, function (index, value) {
+              var remark = '';
+              if (value.Remark) {
+                remark = '<span class="text-danger">' + value.Remark + '</span>';
+              }
+              _html += '<li class="list-group-item">' +
+                '<span class="text-info">' + value.AcceptTime + '</span>' +
+                '<span>' + value.AcceptStation + '</span>' +
+                remark +
+                '</li>';
+            });
+            _html += '</ul>';
+            $('.kdniao_delivery_main .kdniao_delivery_info').html(_html);
+
+          } else {
+            $('.kdniao_delivery_main .kdniao_delivery_info').text('No shipping data found');
+          }
+          //toast.success(ret.msg, '温馨提示');
+        } else {
+          $('.kdniao_delivery_main .kdniao_delivery_info').text(ret.msg);
+        }
+      })
+    });
+
+    //虚拟商品发货信息查询
+    $('[data-target="#sendOutModal"]').click(function () {
+      var _this = $(this);
+      var url = _this.data('url');
+      var id = _this.data('id');
+      var data = {
+        id: id
+      };
+      $.post(url, data, function (ret) {
+        //console.log(ret);
+        if (ret.code) {
+          $('#sendOutModal .delivery_info').text(ret.data.logistic.content);
+        } else {
+          $('#sendOutModal .delivery_info').text(ret.msg);
+        }
+      })
+    });
+  });
+
+
+</script>
+{/block}

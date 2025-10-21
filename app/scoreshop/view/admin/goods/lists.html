@@ -1,0 +1,152 @@
+{extend name="../../admin/view/common/main"/}
+{block name="style"}
+{include file="admin/common/base"}
+{/block}
+{block name="body"}
+<ol class="breadcrumb">
+	<i class="icon icon-angle-left"></i>
+	<li>
+		Product List
+	</li>
+</ol>
+<div class="margin-bottom">
+	<a class="btn btn-primary margin-right" href="{:url('edit')}" role="button">+ Add New</a>
+	<a class="btn btn-success ajax-post margin-right" url="{:url('status', ['status'=> 1])}" target-form="ids"
+		role="button">Publish</a>
+	<a class="btn btn-warning ajax-post margin-right" url="{:url('status', ['status'=> 0])}" target-form="ids"
+		role="button">Unpublish</a>
+	<a class="btn btn-danger ajax-post margin-right" url="{:url('status', ['status'=> -1])}" target-form="ids"
+		role="button">Delete</a>
+</div>
+
+<div class="search-box clearfix margin-bottom row">
+
+	<form action="" method="get" class="search-form" role="form">
+		<div class="col-sm-2">
+			<select name="category_id" class="form-control">
+				<option value="0">All Category</option>
+				{volist name="category_tree" id="row"}
+				{if $category_id == $row['id']}
+				<option selected value="{$row['id']}">{$row['title']}</option>
+				{else}
+				<option value="{$row['id']}">{$row['title']}</option>
+				{/if}
+				{notempty name="row['_child']"}
+				{volist name="row['_child']" id="c_row"}
+				{if $category_id == $c_row['id']}
+				<option selected value="{$c_row['id']}">|----{$c_row['title']}</option>
+				{else}
+				<option value="{$c_row['id']}">|----{$c_row['title']}</option>
+				{/if}
+				{/volist}
+				{/notempty}
+				{/volist}
+			</select>
+		</div>
+		<div class="col-sm-3">
+			<div class="input-group">
+				<div class="input-control search-box has-icon-left has-icon-right search-example" id="searchboxExample">
+					<input class="form-control" name="keyword" placeholder="Keyword" id="" type="text" value="{$keyword}">
+					<label for="inputSearchExample4" class="input-control-icon-left search-icon"><i
+							class="icon icon-search"></i></label>
+				</div>
+				<span class="input-group-btn">
+					<button class="btn btn-primary" type="submit">Search</button>
+				</span>
+			</div>
+		</div>
+	</form>
+</div>
+<section class="goods-list-section card clearfix">
+	{if empty($lists.data)}
+	{include file="admin/common/_empty"/}
+	{else /}
+	<table id="table-data" class="table table-bordered table-striped table-hover muu-table ">
+		<!-- 表头 -->
+		<thead>
+			<tr>
+				<th class="row-selected row-selected" style="width: 20px">
+					<input type="checkbox" class="check-all" id="check-all">
+					<label for="check-all"></label>
+				</th>
+				<th>Product Name</th>
+				<th>Category</th>
+				<th>Stock</th>
+				<th>Create Time</th>
+				<th>Sort</th>
+				<th>Status</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+
+		<!-- 列表 -->
+		<tbody>
+			{volist name="lists.data" id="v"}
+			<tr>
+				<td>
+					<input class="ids" type="checkbox" id="ids-{$v['id']}" value="{$v['id']}" name="ids[]">
+					<label for="ids-{$v['id']}"></label>
+				</td>
+				<td class="text-ellipsis">
+					<div class="cover">
+						<img src="{$v['cover_400']}">
+					</div>
+					<div class="info">
+						<div class="title text-ellipsis">{$v['title']}</div>
+						<div class="price"> Points： {$v['price']}</div>
+						<div class="marking-price"> Original Points： {$v['marking_price']}</div>
+					</div>
+
+				</td>
+				<td class="text-ellipsis">
+					{$v['category']['title']}
+				</td>
+				<td class="text-ellipsis">
+					10
+				</td>
+				<td class="text-ellipsis">
+					{$v['create_time_str']}
+				</td>
+				<td class="text-ellipsis">
+					{$v['sort']}
+				</td>
+				<td class="text-ellipsis">
+					{$v['status_str']}
+				</td>
+				<td class="text-ellipsis">
+					<a class="btn btn-sm btn-info" data-toggle="modal" data-target="#shareModal" 
+						data-id="{$v['id']}" 
+						data-title="{$v['title']}" 
+						data-h5-url="{$v.h5_url}"
+						data-pc-url="{$v.pc_url}"
+					>
+						Preview
+					</a>
+					<a href="{:url('edit',['id'=>$v['id']])}" class="btn btn-mini btn-success"><i
+							class="icon icon-edit"></i> Edit</a>
+					<a href="{:url('sku',['id'=>$v['id']])}" class="btn btn-mini btn-primary">Spec</a>
+					{if $v['status'] == 1}
+					<a href="{:url('status',['ids'=>$v['id'],'status'=> 0])}"
+						class="btn btn-sm btn-warning ajax-get">Unpublish</a>
+					{/if}
+
+					{if $v['status'] == 0}
+					<a href="{:url('status',['ids'=>$v['id'], 'status'=> 1])}"
+						class="btn btn-sm btn-info ajax-get">Publish</a>
+					{/if}
+					<a href="{:url('status',['ids'=>$v['id'], 'status'=> -1])}" data-confirm="Are you sure you want to delete this?"
+						class="btn btn-sm btn-danger ajax-get"><i class="fa fa-times"></i> Delete</a>
+				</td>
+			</tr>
+			{/volist}
+		</tbody>
+	</table>
+	{/if}
+</section>
+<!--列表分页-->
+<div class="page-section">
+	{:htmlspecialchars_decode($pager)}
+</div>
+
+{include file='admin/common/_preview'}
+{/block}

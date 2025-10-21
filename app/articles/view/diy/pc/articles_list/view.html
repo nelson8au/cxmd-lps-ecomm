@@ -1,0 +1,213 @@
+<!--文章列表 START-->
+<div class="object-item" data-type="articles_list" data-object-index="articles_list-{$key}">
+	<div class="object-drag articles-list">
+        <div class="articles-list-preview">
+            <div class="title clearfix">
+				<h2>{$vars['data']['title']}</h2>
+				<span class="sub-title">{$vars['data']['sub_title']}</span>
+            	<small class="more">
+					{if $vars['dev'] == true}
+					View More
+					{else/}
+					<a href="{:url('/articles/lists')}" title="更多文章">
+						View More
+					</a>
+					{/if}
+				</small>
+            </div>
+            <div class="list rank{$vars['data']['rank']|default=0} clearfix">
+			{notempty name="vars.data.list"}
+            {foreach $vars['data']['list'] as $key=>$article_data}
+                {if $vars['data']['style'] == 0}
+                <div class="item-style0" data-type="article_list_item" data-id="{$article_data['id']}">
+					{if $vars['dev'] == false}
+					<a href="{:url('/articles/detail', ['id'=>$article_data['id']])}">
+					{/if}
+                    <div class="image">
+						<img data-original="{$article_data['cover_200']}" class="lazy">
+					</div>
+                    <div class="content">
+                        <div class="title h3 text-ellipsis-2">{$article_data['title']}</div>
+                        <div class="info clearfix">
+                            <div class="a-category">{$article_data['category']['title']}</div>
+                        </div>
+                    </div>
+					{if $vars['dev'] == false}
+					</a>
+					{/if}
+                </div>
+                {/if}
+                {if $vars['data']['style'] == 1}
+                <div class="item-style1" data-type="article_list_item" data-id="{$article_data['id']}">
+                    {if $vars['dev'] == false}
+					<a href="{:url('/articles/detail', ['id'=>$article_data['id']])}">
+					{/if}
+                    <div class="content" style="background-image: url({$article_data['cover_400']});">
+                        <div class="bg"></div>
+                        <div class="title h3 text-ellipsis-2">{$article_data['title']}</div>
+                        
+                        <div class="info clearfix">
+                            <div class="a-category">{$article_data['category']['title']}</div>
+                        </div>
+                    </div>
+					{if $vars['dev'] == false}
+					</a>
+					{/if}
+                </div>
+                {/if}
+                {if $vars['data']['style'] == 2}
+                <div class="item-style2 clearfix" data-type="article_list_item" data-id="{$article_data['id']}">
+					{if $vars['dev'] == false}
+					<a href="{:url('/articles/detail', ['id'=>$article_data['id']])}">
+					{/if}
+						<div class="title h3 text-ellipsis">{$article_data['title']}</div>
+						<div class="create-time">
+							{$article_data['create_time_str']}
+						</div>
+					{if $vars['dev'] == false}
+					</a>
+					{/if}
+                </div>
+                {/if}
+            {/foreach}
+			{/notempty}
+            </div>
+        </div>
+	</div>
+    {if $vars['dev'] == true}
+	<div class="diy-preview-controller articles-list">
+		<div class="panel panel-info">
+		 	<div class="panel-heading">
+		    Article List
+		 	</div>
+		 	<div class="panel-body">
+                <form class="form-horizontal" data-type="articles_list">
+					<input type="hidden" name="app" value="articles"/>
+					<input type="hidden" name="type_title" value="Article List"/>
+					<input type="hidden" name="type" value="articles_list"/>
+					<div class="form-group">
+					    <label class="col-sm-3">Title</label>
+					    <div class="col-sm-9">
+					    	<input type="text" class="form-control" name="title" value="{$vars['data']['title']|default=''}">
+					    </div>
+				  	</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label">副标题</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" name="sub_title" value="{$vars['data']['sub_title']|default=''}">
+						</div>
+					</div>
+			 		
+				  	<div class="form-group">
+					    <label class="col-sm-3">Category</label>
+					    <div class="col-sm-9">
+						   	<select class="form-control" name="category_id" data-category-id="{$vars['data']['category_id']|default=0}">
+								<option value="0">ALL</option>
+							</select>
+					    </div>
+				  	</div>
+
+				  	<div class="form-group">
+					    <label class="col-sm-3">Display No.</label>
+					    <div class="col-sm-9">
+					    	<input type="text" class="form-control" name="rows" value="{$vars['data']['rows']|default=2}">
+					    </div>
+				  	</div>
+				  	<div class="form-group">
+					    <label class="col-sm-3">Sort By</label>
+					    <div class="col-sm-9">
+						    <select class="form-control" name="order_field">
+								{if $vars['data']['order_field']=='create_time'}
+						    	<option value="create_time" selected>Release Time</option>
+						    	{else}
+						    	<option value="create_time">Release Time</option>
+						    	{/if}
+
+						    	{if $vars['data']['order_field']=='update_time'}
+						    	<option value="update_time" selected>Update Time</option>
+						    	{else}
+						    	<option value="update_time">Update Time</option>
+						    	{/if}
+
+						    	{if $vars['data']['order_field']=='view'}
+						    	<option value="view" selected>Views</option>
+						    	{else}
+						    	<option value="view">Views</option>
+						    	{/if}
+
+						    	{if $vars['data']['order_field']=='support'}
+						    	<option value="support" selected>点赞量</option>
+						    	{else}
+						    	<option value="support">点赞量</option>
+						    	{/if}
+
+								{if $vars['data']['order_field']=='sort'}
+								<option value="sort" selected>Sorting Value</option>
+								{else}
+								<option value="sort">Sorting Value</option>
+								{/if}
+							</select>
+					    </div>
+				  	</div>
+				  	<div class="form-group">
+					    <label class="col-sm-3">Sorting Direction</label>
+					    <div class="col-sm-9">
+						    <select class="form-control" name="order_type">
+								{if $vars['data']['order_type']=='ASC'}
+						    	<option value="ASC" selected>Ascending</option>
+						    	{else}
+						    	<option value="ASC">Ascending</option>
+						    	{/if}
+
+						    	{if $vars['data']['order_type']=='DESC'}
+						    	<option value="DESC" selected>Descending</option>
+						    	{else}
+						    	<option value="DESC">Descending</option>
+						    	{/if}
+							</select>
+					    </div>
+				  	</div>
+				  	
+					<div class="form-group style-chonse">
+					    <label class="col-sm-3">样式选择</label>
+					    <div class="col-sm-9">
+						    <select class="form-control" name="style">
+								{if $vars['data']['style'] == 0}
+						    	<option value="0" selected>样式一</option>
+                                <option value="1">样式二</option>
+                                <option value="2">样式三</option>
+						    	{/if}
+
+                                {if $vars['data']['style'] == 1}
+						    	<option value="0">样式一</option>
+                                <option value="1" selected>样式二</option>
+                                <option value="2">样式三</option>
+						    	{/if}
+
+                                {if $vars['data']['style'] == 2}
+						    	<option value="0">样式一</option>
+                                <option value="1">样式二</option>
+                                <option value="2" selected>样式三</option>
+						    	{/if}
+							</select>
+					    </div>
+				  	</div>
+				  	<div class="form-group">
+					    <label class="col-sm-3"></label>
+					    <div class="col-sm-9">
+					      <button type="button" class="btn btn-primary">Confirm</button>
+					    </div>
+				  	</div>
+                </form>
+			</div>
+		</div>
+	</div>
+	<div class="action">
+        <div class="del-btn"><i class="fa fa-times-circle fa-2x"></i></div>
+        <div class="up-btn"><i class="fa fa-chevron-circle-up fa-2x"></i></div>
+        <div class="down-btn"><i class="fa fa-chevron-circle-down fa-2x"></i></div>
+    </div>
+    {/if}
+</div>
+<!--文章列表END-->

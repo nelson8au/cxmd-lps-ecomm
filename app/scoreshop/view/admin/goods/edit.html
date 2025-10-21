@@ -1,0 +1,504 @@
+{extend name="../../admin/view/common/main"/}
+{block name="style"}
+{include file="admin/common/base"}
+<style>
+  .image-upload .upload-img-box .upload-pre-item {
+    letter-spacing: unset;
+  }
+
+  .invisible {
+    display: none;
+  }
+</style>
+{/block}
+{block name='body'}
+
+<ol class="breadcrumb">
+  <i class="icon icon-angle-left"></i>
+  <li>
+    <a href="{:url('lists')}">Product Management</a>
+  </li>
+  <li>
+    Add/Edit Product
+  </li>
+</ol>
+<!--新增/编辑 视频-->
+<div class="goods-edit-section">
+  <!--课程编辑标签-->
+  <ul class="nav nav-primary tab-menu">
+    <li class="active"><a data-tab href="#tabBase">Basic Settings</a></li>
+    <li><a data-tab href="#tabTitle">Product Title</a></li>
+    <li><a data-tab href="#tabDescription">Short Description</a></li>
+    <!-- <li><a data-tab href="#tabContent">Product Description</a></li> -->
+    <li><a data-tab href="#tabCustom">Custom Settings</a></li>
+  </ul>
+  <form action="{:url('edit')}" class="form-horizontal ajax-form card video-edit-form" id="videoEditForm" method="post"
+    role="form">
+    <input name="id" type="hidden" value="{$data['id']|default=0}">
+    <div class="form-body">
+      <div class="tab-content">
+        <!--课程基本信息-->
+        <div class="tab-pane active" id="tabBase">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Product Type</label>
+            <div class="form-controls col-sm-8">
+              <div class="goods-type">
+                {if isset($data['type']) && $data['type'] == 0}
+                <input id="is_type-0" name="type" type="radio" value="0" checked>
+                <label class="radio-inline" for="is_type-0">Physical Goods</label>
+                <input id="is_type-1" name="type" type="radio" value="1">
+                <label class="radio-inline" for="is_type-1">Virtual Goods</label>
+                {else /}
+                <input id="is_type-0" name="type" type="radio" value="0">
+                <label class="radio-inline" for="is_type-0">Physical Goods</label>
+                <input id="is_type-1" name="type" type="radio" value="1" checked>
+                <label class="radio-inline" for="is_type-1">Virtual Goods</label>
+                {/if}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Product Code</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="code" placeholder="Product Code, e.g.:SKU" type="text"
+                value="{$data['code']|default=''}">
+              <div class="help-block">Please Enter Product Code</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Cover</label>
+            <div class="form-controls col-sm-8">
+              {:single_image_upload('cover', $data['cover'] ?? '')}
+              <div class="help-block">The recommended size for the cover：800*800px, supports jpg, png</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Product Carousel Images (Multiple Images)</label>
+            <div class="form-controls col-sm-8">
+              {:multi_image_upload('images', $data['images'] ?? '')}
+              <div class="help-block">The recommended size for the cover：800*800px, supports jpg, png</div>
+            </div>
+          </div>
+
+          <div class="form-group invisible">
+            <label class="col-sm-2 control-label">Product Video</label>
+            <div class="form-controls col-sm-8">
+              {:single_video_upload('video',$data['video'] ?? '',true)}
+              <div class="help-block">Enter the video URL or click the button on the right to upload. Supported formats:
+                mp4, m3u8</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Category</label>
+            <div class="form-controls col-sm-8">
+              {include file='admin/category/_category_select'}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Brand</label>
+            <div class="form-controls col-sm-8">
+              {include file='admin/brands/_brand_select'}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Attribute</label>
+            <div class="form-controls col-sm-8">
+              {include file='admin/attribute/_attribute'}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Price</label>
+            <div class="form-controls col-sm-8">
+              <div class="price-input">
+                <div class="form-group">
+                  <label class="col-xs-2 control-label">Product Price</label>
+                  <div class="form-controls col-xs-8">
+                    <div class="input-group">
+                      <input class="form-control" name="price" placeholder="Please Enter Points" type="text"
+                        value="{$data['price']|default=0.00}">
+                      <span class="input-group-addon">Points</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-xs-2 control-label">Original Price</label>
+                  <div class="form-controls col-xs-8">
+                    <div class="input-group">
+                      <input class="form-control" name="marking_price" placeholder="Please Enter Points" type="text"
+                        value="{$data['marking_price']|default=0.00}">
+                      <span class="input-group-addon">Points</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="help-block">The product does not have any other discounts (such as limited-time offers),
+                  will the Original Price be displayed in a crossed-out format on the product details page</div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Stock</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" max="99999" name="quantity" placeholder="Stock" type="number"
+                value="{$data['quantity']|default=0}">
+              <div class="help-block">Stock</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Sort</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" max="255" name="sort" placeholder="Sort" type="number"
+                value="{$data['sort']|default=0}">
+              <div class="help-block">The higher the number, the higher the priority, with a maximum of 255.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Listing Settings</label>
+            <div class="form-controls col-sm-8">
+              <div class="">
+                {if isset($data['status']) && $data['status'] == 1}
+                <input checked id="is_status-1" name="status" type="radio" value="1">
+                <label class="radio-inline" for="is_status-1">Publish Now</label>
+                <input id="is_status-0" name="status" type="radio" value="0">
+                <label class="radio-inline" for="is_status-0"> Do Not Publish</label>
+                {else}
+                <input id="is_status-1" name="status" type="radio" value="1">
+                <label class="radio-inline" for="is_status-1">Publish Now</label>
+                <input checked id="is_status-0" name="status" type="radio" value="0">
+                <label class="radio-inline" for="is_status-0"> Do Not Publish</label>
+                {/if}
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Type</label>
+            <div class="form-controls col-sm-8">
+              <div class="">
+                {if isset($data['is_latest']) && $data['is_latest'] == 1}
+                <input checked id="is_latest" name="is_latest" type="checkbox">
+                {else}
+                <input id="is_latest" name="is_latest" type="checkbox">
+                {/if}
+                <label class="radio-inline" for="is_latest">Latest</label>
+
+
+                {if isset($data['is_hottest']) && $data['is_hottest'] == 1}
+                <input checked id="is_hottest" name="is_hottest" type="checkbox">
+                {else}
+                <input id="is_hottest" name="is_hottest" type="checkbox">
+                {/if}
+                <label class="radio-inline" for="is_hottest">Hot</label>
+
+                {if isset($data['is_special_discount']) && $data['is_special_discount'] == 1}
+                <input checked id="is_special_discount" name="is_special_discount" type="checkbox">
+                {else}
+                <input id="is_special_discount" name="is_special_discount" type="checkbox">
+                {/if}
+                <label class="radio-inline" for="is_special_discount">Discount</label>
+
+                {if isset($data['is_women_area']) && $data['is_women_area'] == 1}
+                <input checked id="is_women_area" name="is_women_area" type="checkbox">
+                {else}
+                <input id="is_women_area" name="is_women_area" type="checkbox">
+                {/if}
+                <label class="radio-inline" for="is_women_area">Women</label>
+
+                {if isset($data['is_men_area']) && $data['is_men_area'] == 1}
+                <input checked id="is_men_area" name="is_men_area" type="checkbox">
+                {else}
+                <input id="is_men_area" name="is_men_area" type="checkbox">
+                {/if}
+                <label class="radio-inline" for="is_men_area">Men</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!--商品标题-->
+        <div class="tab-pane" id="tabTitle">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">English</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title" type="text" value="{$data['title']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Arabic</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_ar" type="text" value="{$data['title_ar']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Hindi</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_hi" type="text" value="{$data['title_hi']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Indonesia</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_id" type="text" value="{$data['title_id']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Japanese</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_ja" type="text" value="{$data['title_ja']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Thai</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_th" type="text" value="{$data['title_th']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Vietnamese</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_vi" type="text" value="{$data['title_vi']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Melayu</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_ms" type="text" value="{$data['title_ms']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Chinese</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_zh" type="text" value="{$data['title_zh']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Portuguese</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_pt" type="text" value="{$data['title_pt']|default=''}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Spanish</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="title_es" type="text" value="{$data['title_es']|default=''}">
+            </div>
+          </div>
+        </div>
+
+        <!--简短描述-->
+        <div class="tab-pane" id="tabDescription">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">English</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description" rows="3">{$data['description']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Arabic</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_ar"
+                rows="3">{$data['description_ar']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Hindi</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_hi"
+                rows="3">{$data['description_hi']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Indonesia</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_id"
+                rows="3">{$data['description_id']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Japanese</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_ja"
+                rows="3">{$data['description_ja']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Thai</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_th"
+                rows="3">{$data['description_th']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Vietnamese</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_vi"
+                rows="3">{$data['description_vi']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Melayu</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_ms"
+                rows="3">{$data['description_ms']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Chinese</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_zh"
+                rows="3">{$data['description_zh']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Portuguese</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_pt"
+                rows="3">{$data['description_pt']|default=''}</textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Spanish</label>
+            <div class="form-controls col-sm-8">
+              <textarea class="form-control" name="description_es"
+                rows="3">{$data['description_es']|default=''}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!--商品描述-->
+        <div class="tab-pane" id="tabContent">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">English</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content', 'content', $data['content'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Arabic</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_ar', 'content_ar', $data['content_ar'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Hindi</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_hi', 'content_hi', $data['content_hi'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Indonesia</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_id', 'content_id', $data['content_id'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Japanese</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_ja', 'content_ja', $data['content_ja'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Thai</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_th', 'content_th', $data['content_th'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Vietnamese</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_vi', 'content_vi', $data['content_vi'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Melayu</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_ms', 'content_ms', $data['content_ms'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Chinese</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_zh', 'content_zh', $data['content_zh'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Portuguese</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_pt', 'content_pt', $data['content_pt'] ?? '')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Spanish</label>
+            <div class="form-controls col-sm-8">
+              {:ueditor('content_es', 'content_es', $data['content_es'] ?? '')}
+            </div>
+          </div>
+        </div>
+
+        <!--自定义设置-->
+        <div class="tab-pane" id="tabCustom">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Custom Views</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="f_view" placeholder="Views" type="number"
+                value="{$data['f_view']|default=0}">
+              <div class="help-block">Custom Views</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Custom Sales</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="f_sales" placeholder="Sales" type="number"
+                value="{$data['f_sales']|default=0}">
+              <div class="help-block">Custom Sales</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Custom Favorites</label>
+            <div class="form-controls col-sm-8">
+              <input class="form-control" name="f_favorites" placeholder="Favorites" type="number"
+                value="{$data['f_favorites']|default=0}">
+              <div class="help-block">Custom Favorites</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="form-controls col-sm-8">
+          <button class="btn btn-lg btn-primary" data-role="submit" type="button">Submit</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+{/block}
+{block name="script"}
+<script>
+  $(function () {
+    //表单提交
+    $('[data-role="submit"]').click(function () {
+      //提交表单
+      $('#videoEditForm').submit();
+    });
+  });
+</script>
+
+{/block}

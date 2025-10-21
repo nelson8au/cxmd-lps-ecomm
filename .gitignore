@@ -1,0 +1,50 @@
+/.idea
+/.vscode
+*.log
+
+# gulp
+node_modules/
+
+# Ignore runtime files and directories
+runtime/*
+public/runtime/*
+application/runtime/*
+data/backup
+data/install.lock
+data/version.ini
+data/upgrade.sql
+public/data/*
+
+# Ignore session files
+session/*
+
+# Ignore cache files
+cache/*
+
+# Ignore database configuration file
+# database.php
+app/admin/controller/Database.php
+extend/muucmf/Database.php
+
+# Ignore development files and directories
+tests/*
+public/uploads/*
+public/index.php
+
+# Ignore Composer files
+composer.phar
+vendor/
+
+# Ignore system files and directories
+.DS_Store
+Thumbs.db
+dump.rdb
+
+.env
+.env.docker
+
+app/micro
+cxmtloyaltypoints.sql
+public/attachment/images
+public/h5
+public/report*.csv

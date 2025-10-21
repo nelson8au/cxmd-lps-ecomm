@@ -1,0 +1,199 @@
+<link href="/static/admin/css/main.min.css" rel="stylesheet">
+<style>
+  .header .header-container {
+    height: 75px;
+    display: flex;
+    align-items: center;
+  }
+
+  .header .header-container .navbar-header .attr-nav ul.no-login .login::after {
+    content: '';
+  }
+
+  .header .header-container .navbar-header .attr-nav .user-info>a {
+    color: #fff;
+  }
+
+  .header .header-container .navbar-header .attr-nav {
+    max-width: 400px;
+  }
+
+  .header .header-container .navbar-header .attr-nav .loyalty-info .dropdown-menu::before {
+    border-color: transparent transparent #000;
+  }
+
+  .header .header-container .navbar-header .attr-nav .loyalty-info .dropdown-menu {
+    min-width: unset !important;
+    width: unset !important;
+    padding: 10px 30px !important;
+    background: #000;
+    color: #fff;
+  }
+
+  .header .header-container .navbar-header .attr-nav .loyalty-info .dropdown-menu>li {
+    height: unset !important;
+  }
+
+  .header .loyalty-info {
+    padding-right: 25px;
+    padding-top: 2.5px;
+  }
+
+  .header .loyalty-info .progressbar {
+    margin-bottom: 10px !important;
+  }
+
+  .header .loyalty-info .loyalty-status-btn {
+    padding: 2.5px 25px !important;
+    border: 1px solid #595959;
+    border-radius: 25px;
+  }
+
+  .header .loyalty-info .loyalty-status-btn:hover {
+    background: #5d5d5d;
+  }
+
+  .header .loyalty-info .loyalty-status-image {
+    margin-top: 5px;
+  }
+
+  .header .loyalty-info .loyalty-status-content {
+    line-height: unset !important;
+    text-transform: capitalize;
+  }
+</style>
+<!-- <div id="header" class="header-container"> -->
+<div class="header">
+  <div class="header-container">
+    <div class="navbar-header">
+      <div class="logo">
+        <h1 class="cxm-logo">
+          <a href="<?php echo env('app.frontend_url'); ?>" class="logo-href">
+            <img alt="CXM Direct Logo" src="/images/logo.png">
+            <!-- {notempty name="micro_config_data.long_logo"}
+            <img alt="{$micro_config_data.title}" src="{$micro_config_data.long_logo_original}">
+            {else/}
+            <img alt="{$muu_config_data.WEB_SITE_NAME}" src="{$muu_config_data.WEB_SITE_LOGO_ORIGIN}">
+            {/notempty} -->
+          </a>
+        </h1>
+      </div>
+      <div class="attr-nav">
+        {if condition="is_login()"}
+        <div class="user-info loyalty-info">
+          <a class="dropdown-toggle dropdown-toggle-avatar loyalty-status-btn" data-toggle="dropdown" role="button">
+            <img class="avatar img-circle loyalty-status-image" src="/images/estate/silver.png" />
+            <span class="nickname text-ellipsis loyalty-status-content">
+              {$currentLevelInLowerCase|default='Silver'} <br>
+              {$clientData['wallet_lps']|default='0'} pts to spend
+            </span>
+          </a>
+
+          <ul class="dropdown-menu " role="menu">
+            {$clientData['ls_value']|default='0'}/{$clientData['next_ls_value']|default='0'}
+            <div id="header-points-progress-bar"></div>
+            {$clientData['ls_to_next']|default='0'} pts until next level
+          </ul>
+        </div>
+
+        <div class="user-info">
+          <a class="dropdown-toggle dropdown-toggle-avatar" data-toggle="dropdown" role="button">
+            <img class="avatar img-circle" src="{$common_header_user.avatar64}" />
+            <span class="nickname text-ellipsis">{$common_header_user.nickname}</span>
+          </a>
+
+          <ul class="dropdown-menu " role="menu">
+            <!-- {volist name="user_nav" id="vo"}
+            <li>
+              <a href="{:get_nav_url($vo['url'])}" target="{eq name='vo.target' value='1'}_blank{else/}_self{/eq}">
+                <span>{$vo.title}</span>
+              </a>
+            </li>
+            {/volist} -->
+            {if condition="check_auth('admin/Index/index')"}
+            <li>
+              <a href="{:url('admin/Index/index')}" target="_blank">
+                Admin Panel
+              </a>
+            </li>
+            {/if}
+            <!-- <li>
+              <a href="{:url('ucenter/Common/logout')}" class="ajax-get confirm logout-btn">
+                Logout
+              </a>
+            </li> -->
+          </ul>
+        </div>
+        <script>
+          const loyaltyStatusBtn = document.querySelector('.header .loyalty-info .loyalty-status-btn');
+          if (loyaltyStatusBtn) {
+            loyaltyStatusBtn.addEventListener('mouseover', () => {
+              document.querySelector('.header .loyalty-info').classList.add('open');
+            });
+            loyaltyStatusBtn.addEventListener('mouseout', () => {
+              document.querySelector('.header .loyalty-info').classList.remove('open');
+            });
+          }
+
+          $(function () {
+            // 获取未读消息数量
+            var url = '{:url("api/message/unread")}';
+            $.post(url, {
+              shopid: 0,
+            }, function (res) {
+              if (res.code == 200) {
+                if (res.data.friendly_num == 0) {
+                  $('.information-quantity').addClass('hidden');
+                } else {
+                  $('.information-quantity').removeClass('hidden');
+                  $('.information-quantity').text(res.data.friendly_num);
+                }
+              }
+            })
+          })
+        </script>
+        {else/}
+        <ul class="no-login clearfix">
+          <li class="login verticalbar">
+            <!-- 弹框 -->
+            {if condition="$open_quick_login"}
+            <a data-login="quick_do_login" data-remote="{:url('ucenter/Common/quickLogin')}" data-show-header="false"
+              data-toggle="modal">登录</a>
+            {else/}
+            <!-- 单页 -->
+            <a data-login="do_login" href="{$login_url}">登录</a>
+            {/if}
+          </li>
+        </ul>
+        {/if}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/admin/js/main.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.js"></script>
+<script src="/js/jquery.lineProgressbar.js"></script>
+<script>
+  const headerCurrentPoint = "{$clientData['ls_value']|default='0'}";
+  const headerNextLevelPoint = "{$clientData['next_ls_value']|default='0'}";
+  const headerCurrentProgressToNextLevel = (parseFloat(headerCurrentPoint) / parseFloat(headerNextLevelPoint)) * 100;
+
+  const headerCurrentMemberLevel = "{$currentLevelInLowerCase|default='silver'}";
+
+  const headerColor = {
+    silver: '#5d5d5d',
+    gold: '#50380A',
+    platinum: '#30545B',
+    diamond: '#10224F',
+  };
+
+  $('#header-points-progress-bar').LineProgressbar({
+    percentage: headerCurrentProgressToNextLevel,
+    fillBackgroundColor: headerColor[headerCurrentMemberLevel],
+    height: '10px',
+    radius: '15px',
+    ShowProgressCount: false,
+    width: '100%'
+  });
+</script>

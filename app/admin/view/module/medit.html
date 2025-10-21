@@ -1,0 +1,119 @@
+{extend name="common/main"/}
+
+{block name="body"}
+    <div class="main-title">
+        <h2>{:isset($info['id'])?'Edit':'Add'} Admin Panel Menu</h2>
+    </div>
+    <form action="{:url()}" method="post" class="form-horizontal">
+        <div class="with-padding">
+            <div class="form-item builder_item">
+                <label class="item-label">Title<span class="check-tips">(Configuration title displayed in the backend)</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-input-width form-control" name="title" value="{$info.title|default=''}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Module<span class="check-tips">（Belonging application module; the application menu must be selected, otherwise export will not be possible）</span></label>
+                <div class="controls">
+                    <select name="module" class="form-select-size form-control" readonly>
+                        <option value="admin">System Menu</option>
+                        {volist name="Modules" id="module"}
+                        {if $app == $module.name}
+                        <option value="{$module.name}" selected>{$module.alias}-{$module.name}</option>
+                        {else /}
+                        <option value="{$module.name}">{$module.alias}-{$module.name}</option>
+                        {/if}
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Icon<span class="check-tips">（Displayed on the left side of the menu; leave blank to not display）</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-small form-input-width form-control" name="icon" value="{$info.icon|default=''}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Sort<span class="check-tips">(Order of display in the group)</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-small form-input-width form-control" name="sort" value="{$info.sort|default=0}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">URL<span class="check-tips">(System URL function path, structure: application/controller/method; the module part can be omitted for system menus)</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-input-width form-control" name="url" value="{$info.url|default=''}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Parent Menu<span class="check-tips">(Parent Menu it belongs to)</span></label>
+                <div class="controls">
+                    <select name="pid" class="form-select-size form-control" readonly>
+                        <option value="0">Top-level Menu</option>
+                        {notempty name="Menus"}
+                        {volist name="Menus" id="menu"}
+                            {if $pid == $menu.id}
+                            <option value="{$menu.id}" selected>{:htmlspecialchars_decode($menu.title_show)}</option>
+                            {else}
+                            <option value="{$menu.id}">{:htmlspecialchars_decode($menu.title_show)}</option>
+                            {/if}
+                        {/volist}
+                        {/notempty}
+                    </select>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Group<span class="check-tips">(Used for the secondary menu on the left side)</span></label>
+                <div class="controls">
+                    <input type="text" class="text form-input-width form-control input-large" name="group" value="{$info.group|default=''}">
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">Is Hide<span class="check-tips"></span></label>
+                <div class="controls">
+                    <input type="radio" name="hide" value="1" id="hide-1">
+                    <label for="hide-1">Yes</label>
+
+                    <input type="radio" name="hide" value="0" id="hide-0">
+                    <label for="hide-0">No</label>
+                </div>
+            </div>
+            
+            <div class="form-item builder_item">
+                <label class="item-label">Menu Type<span class="check-tips"></span></label>
+                <div class="controls">
+                    {if $info.type == 1}
+                    <input type="radio" name="type" value="1" id="type-1" checked>
+                    <label for="type-1">App</label>
+                    <input type="radio" name="type" value="0" id="type-0">
+                    <label for="type-0">System</label>
+                    {else}
+                    <input type="radio" name="type" value="1" id="type-1">
+                    <label for="type-1">App</label>
+                    <input type="radio" name="type" value="0" id="type-0" checked>
+                    <label for="type-0">System</label>
+                    {/if}
+                </div>
+            </div>
+            <div class="form-ite builder_item">
+                <label class="item-label">Description<span class="check-tips">(Description of the menu)</span></label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-control form-input-width" name="tip" value="{$info.tip|default=''}">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-item builder_item">
+            <input type="hidden" name="id" value="{$info.id|default=''}">
+            <button class="btn btn-success submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">Save</button>
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">Back</button>
+        </div>
+    </form>
+{/block}
+
+{block name="script"}
+    <script type="text/javascript">
+        
+        Think.setValue("hide", '{$info.hide|default=0}');
+    </script>
+{/block}

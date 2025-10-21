@@ -1,0 +1,148 @@
+{extend name="common/main"/}
+
+{block name="body"}
+<div class="main-title">
+    <h2>Add/Edit Task</h2>
+</div>
+
+<div class="with-padding">
+    <div class="crontab-edit-section">
+        <form action="" class="form-horizontal ajax-form" method="post" role="form">
+            <input name="id" type="hidden" value="{$data['id']|default=0}">
+
+            <div class="builder_item">
+                <label class="item-label">
+                    Title
+                    <span class="check-tips">(Please fill in the message type title)</span>
+                </label>
+                <div class="controls">
+                    <input class="form-control" name="title" placeholder="请填写任务标题" type="text"
+                           value="{$data['title']|default=''}">
+                </div>
+            </div>
+
+            <div class="builder_item">
+                <label class="item-label">
+                    Description
+                    <span class="check-tips">(Please fill in the task short description)</span>
+                </label>
+                <div class="controls textarea">
+                    <textarea class="form-control" name="description">{$data['description']|default=''}</textarea>
+                </div>
+            </div>
+
+            <div class="builder_item">
+                <label class="item-label">
+                    Execution Path
+                    <span class="check-tips">(Please fill in the task execution path)</span>
+                </label>
+                <div class="controls">
+                    <input class="form-control" name="execute" placeholder="Please fill in the task execution path" type="text"
+                           value="{$data['execute']|default=''}">
+                </div>
+            </div>
+
+            <div class="builder_item">
+                <label class="item-label">
+                    Execution Cycle
+                    <span class="check-tips"> (Please select the execution cycle)</span>
+                </label>
+                <div class="controls cycle" data-cycle="{$data['cycle']|default='minute-n'}">
+                    <select class="form-control cycle-item" name="cycle">
+                        <option value="hour">Every Hour</option>
+                        <option value="day">Every Day</option>
+                        <option value="month">Every Month</option>
+                        <option value="minute-n">Every N Minutes</option>
+                        <option value="hour-n">Every N Hours</option>
+                        <option value="day-n">Every N Days</option>
+                    </select>
+
+                    <div class="input-group cycle-item cycle-item-day">
+                        <input type="number" name="day" class="form-control" value="{$data['day']|default=1}">
+                        <span class="input-group-addon">Day</span>
+                    </div>
+
+                    <div class="input-group cycle-item cycle-item-hour">
+                        <input type="number" name="hour" class="form-control" value="{$data['hour']|default=1}">
+                        <span class="input-group-addon">Hour</span>
+                    </div>
+
+                    <div class="input-group cycle-item cycle-item-minute">
+                        <input type="number" name="minute" class="form-control" value="{$data['minute']|default=1}">
+                        <span class="input-group-addon">Minute</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="builder_item">
+
+                <label class="item-label">Status Settings
+</label>
+                <div class="controls status-section">
+                    {if isset($data['status']) && $data['status'] == 1}
+                    <input checked id="is_status-1" name="status" type="radio" value="1">
+                    <label class="radio-inline" for="is_status-1">Enable</label>
+                    <input id="is_status-0" name="status" type="radio" value="0">
+                    <label class="radio-inline" for="is_status-0"> Disable</label>
+                    {else /}
+                    <input id="is_status-1" name="status" type="radio" value="1">
+                    <label class="radio-inline" for="is_status-1">Enable</label>
+                    <input checked id="is_status-0" name="status" type="radio" value="0">
+                    <label class="radio-inline" for="is_status-0"> Disable</label>
+                    {/if}
+                </div>
+            </div>
+
+
+            <div class="builder_item">
+                <label class="item-label"></label>
+                <div class="form-controls">
+                    <button class="btn btn-lg btn-primary" type="submit">Submit</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+
+{/block}
+{block name="script"}
+<script>
+    $(function () {
+        //默认选中
+        $("[name='cycle']").val($('.cycle').data('cycle'));
+        cycleItmeChange();
+        //选择框变化
+        $('.cycle-item').change(function () {
+            cycleItmeChange()
+        })
+
+        function cycleItmeChange() {
+            let cycle = $("[name='cycle'] option:selected").val();
+            switch (cycle) {
+                case 'minute-n':
+                case 'hour':
+                    $('.cycle-item-minute').show();
+                    $('.cycle-item-hour').hide();
+                    $('.cycle-item-day').hide();
+                    break
+                case 'day':
+                case 'hour-n':
+                    $('.cycle-item-minute').show();
+                    $('.cycle-item-hour').show();
+                    $('.cycle-item-day').hide();
+                    break;
+                case 'month':
+                case 'day-n':
+                    $('.cycle-item-minute').show();
+                    $('.cycle-item-hour').show();
+                    $('.cycle-item-day').show();
+                    break;
+            }
+        }
+    });
+</script>
+
+{/block}

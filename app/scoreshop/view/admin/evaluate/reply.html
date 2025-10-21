@@ -1,0 +1,10 @@
+<div class="reply-evaluate-box">      
+    <form action="{:url('reply',['id'=>$evaluate_info['id'],'order_no'=>$evaluate_info['order_no']])}" method="post" class="form ajax-form">
+        <input type="hidden" name="id" value="{$evaluate_info['id']}" />
+        <textarea class="form-control" name="reply" row=3 placeholder="Please Enter Reply">{$evaluate_info['reply']}</textarea>
+        
+        <div class="action">
+            <button type="submit" class="btn btn-block btn-success">Confirm</button>
+        </div>
+    </form>
+</div>

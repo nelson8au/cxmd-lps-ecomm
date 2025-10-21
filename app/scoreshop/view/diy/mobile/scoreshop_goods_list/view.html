@@ -1,0 +1,233 @@
+<!--列表-->
+<div class="object-item" data-type="scoreshop_goods_list" data-object-index="{$vars['data']['type']}-{$vars['key']}">
+	<div class="object-drag scoreshop-goods-list">
+		<div class="scoreshop-goods-list-preview">
+			<div class="title clearfix">
+				<h3>{$vars['data']['title']}</h3>
+				<small class="more">View More </small>
+			</div>
+			<div class="list rank{$vars['data']['rank']} clearfix">
+				{if $vars['data']['rank'] == 1}
+				{notempty name="vars['data']['list']"}
+				{foreach $vars['data']['list'] as $key=>$vo}
+				<div class="item small" data-type="scoreshop_goods_list_item" data-id="{$vo['id']}">
+					<div class="image">
+						<img src="{$vo['cover_200']}" />
+						<div class="type-container">{$vo['type_str']}</div>
+					</div>
+					<div class="content">
+						<div class="title h3 text-ellipsis">{$vo['title']}</div>
+						<div class="description text-ellipsis">{$vo['description']}</div>
+						<div class="price"><span class="score">{$vo['price']}</span></div>
+						<div class="info">
+							<div class="type text-ellipsis">
+								{if $vars['data']['config']['show']['view'] == 1}
+								<div class="view">
+									<i class="fa fa-eye" aria-hidden="true"></i> {$vo['view']}
+								</div>
+								{/if}
+
+								{if $vars['data']['config']['show']['sale'] == 1}
+								<div class="shopping">
+									<i class="fa fa-shopping-bag" aria-hidden="true"></i> {$vo['sales']}
+								</div>
+								{/if}
+
+								{if $vars['data']['config']['show']['favorites'] == 1}
+								<div class="favorites">
+									<i class="fa fa-star-o" aria-hidden="true"></i>
+									<span class="favorites-num">{$vo['favorites']}</span>
+								</div>
+								{/if}
+							</div>
+						</div>
+					</div>
+				</div>
+				{/foreach}
+				{/notempty}
+				{/if}
+
+				{if $vars['data']['rank'] == 0}
+				{notempty name="vars['data']['list']"}
+				{foreach $vars['data']['list'] as $key=>$vo}
+				<div class="item" data-type="scoreshop_goods_list_item" data-id="{$vo['id']}">
+
+					<div class="image">
+						<img src="{$vo['cover_200']}" />
+						<div class="type-container">{$vo['type_str']}</div>
+					</div>
+					<div class="content">
+						<div class="title h3 text-ellipsis">{$vo['title']}</div>
+						<div class="description text-ellipsis">{$vo['description']}</div>
+						<div class="price"><span class="score">{$vo['price']}</span></div>
+						<div class="info">
+							<div class="type">
+								{if $vars['data']['config']['show']['view'] == 1}
+								<div class="view">
+									<i class="fa fa-eye" aria-hidden="true"></i> {$vo['view']}
+								</div>
+								{/if}
+
+								{if $vars['data']['config']['show']['sale'] == 1}
+								<div class="shopping">
+									<i class="fa fa-shopping-bag" aria-hidden="true"></i> {$vo['sales']}
+								</div>
+								{/if}
+
+								{if $vars['data']['config']['show']['favorites'] == 1}
+								<div class="favorites">
+									<i class="fa fa-star-o" aria-hidden="true"></i>
+									<span class="favorites-num">{$vo['favorites']}</span>
+								</div>
+								{/if}
+							</div>
+						</div>
+					</div>
+				</div>
+				{/foreach}
+				{/notempty}
+				{/if}
+			</div>
+		</div>
+	</div>
+	<div class="diy-preview-controller {$vars['data']['type']}">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				Points Mall Item
+			</div>
+			<div class="panel-body">
+				<form class="form-horizontal" data-type="scoreshop_goods_list">
+					<input type="hidden" name="app" value="scoreshop" />
+					<input type="hidden" name="type" value="scoreshop_goods_list" />
+					<input type="hidden" name="type_title" value="Product List" />
+					<div class="form-group">
+						<label class="col-sm-3">Title</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" name="title" value="{$vars['data']['title']}">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3">Product Category</label>
+						<div class="col-sm-9">
+							<select class="form-control wide" name="category_id"
+								data-category-id="{$vars['data']['category_id']}">
+								<option value="0">ALL</option>
+								{notempty name="$vars.data.category_tree"}
+								{volist name="$vars.data.category_tree" id="v"}
+								{if $vars.data.category_id == $v.id}
+								<option value="{$v['id']}" selected><b>{$v.title}</b></option>
+								{else}
+								<option value="{$v['id']}"><b>{$v.title}</b></option>
+								{/if}
+								{notempty name="$v._child"}
+									{volist name="$v._child" id="_v"}
+									{if $vars.data.category_id == $_v.id}
+									<option value="{$_v['id']}" selected>|----{$_v['title']}</option>
+									{else}
+									<option value="{$_v['id']}">|----{$_v['title']}</option>
+									{/if}
+									{/volist}
+								{/notempty}
+								{/volist}
+								{/notempty}
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3">Display No.</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" name="rows" value="{$vars['data']['rows']}">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3">Sort By</label>
+						<div class="col-sm-9">
+							<select class="form-control wide" name="order_field">
+								{if $vars['data']['order_field']=='create_time'}
+								<option value="create_time" selected>Release Time</option>
+								{else}
+								<option value="create_time">Release Time</option>
+								{/if}
+
+								{if $vars['data']['order_field']=='update_time'}
+								<option value="update_time" selected>Update Time</option>
+								{else}
+								<option value="update_time">Update Time</option>
+								{/if}
+
+								{if $vars['data']['order_field']=='view'}
+								<option value="view" selected>Views</option>
+								{else}
+								<option value="view">Views</option>
+								{/if}
+
+								{if $vars['data']['order_field']=='price'}
+								<option value="price" selected>Price</option>
+								{else}
+								<option value="price">Price</option>
+								{/if}
+
+								{if $vars['data']['order_field']=='sort'}
+								<option value="sort" selected>Sorting Value</option>
+								{else}
+								<option value="sort">Sorting Value</option>
+								{/if}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3">Sorting Direction</label>
+						<div class="col-sm-9">
+							<select class="form-control wide" name="order_type">
+								{if $vars['data']['order_type']=='ASC'}
+								<option value="ASC" selected>Ascending</option>
+								{else}
+								<option value="ASC">Ascending</option>
+								{/if}
+
+								{if $vars['data']['order_type']=='DESC'}
+								<option value="DESC" selected>Descending</option>
+								{else}
+								<option value="DESC">Descending</option>
+								{/if}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3">Layout Arrangement</label>
+						<div class="col-sm-9">
+							<select class="form-control wide" name="rank">
+								{if $vars['data']['rank']==0}
+								<option value="0" selected>Horizontal</option>
+								{else}
+								<option value="0">Horizontal</option>
+								{/if}
+
+								{if $vars['data']['rank']==1}
+								<option value="1" selected>Vertical</option>
+								{else}
+								<option value="1">Vertical</option>
+								{/if}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3"></label>
+						<div class="col-sm-9">
+							<button type="button" class="btn btn-primary">Confirm</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="action">
+		<div class="del-btn"><i class="fa fa-times-circle fa-2x"></i></div>
+		<div class="up-btn"><i class="fa fa-chevron-circle-up fa-2x"></i></div>
+		<div class="down-btn"><i class="fa fa-chevron-circle-down fa-2x"></i></div>
+	</div>
+</div>
+
+<!--商品列表END-->

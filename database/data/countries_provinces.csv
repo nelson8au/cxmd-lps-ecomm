@@ -1,0 +1,380 @@
+Name,Level,Parent
+Brunei,1,0
+Belait District,2,Brunei
+Brunei-Muara District,2,Brunei
+Temburong District,2,Brunei
+Tutong District,2,Brunei
+Cambodia,1,0
+Banteay Meanchey,2,Cambodia
+Battambang,2,Cambodia
+Kampong Cham,2,Cambodia
+Kampong Chhnang,2,Cambodia
+Kampong Speu,2,Cambodia
+Kampong Thom,2,Cambodia
+Kampot,2,Cambodia
+Kandal,2,Cambodia
+Kep,2,Cambodia
+Koh Kong,2,Cambodia
+Kratie,2,Cambodia
+Mondulkiri,2,Cambodia
+Oddar Meanchey,2,Cambodia
+Pailin,2,Cambodia
+Phnom Penh,2,Cambodia
+Preah Vihear,2,Cambodia
+Prey Veng,2,Cambodia
+Pursat,2,Cambodia
+Ratanakiri,2,Cambodia
+Siem Reap,2,Cambodia
+Sihanoukville,2,Cambodia
+Stung Treng,2,Cambodia
+Svay Rieng,2,Cambodia
+Takeo,2,Cambodia
+Timor-Leste,1,0
+Aileu municipality,2,Timor-Leste
+Ainaro Municipality,2,Timor-Leste
+Baucau Municipality,2,Timor-Leste
+Bobonaro Municipality,2,Timor-Leste
+Cova Lima Municipality,2,Timor-Leste
+Dili municipality,2,Timor-Leste
+Ermera District,2,Timor-Leste
+Lautém Municipality,2,Timor-Leste
+Liquiçá Municipality,2,Timor-Leste
+Manatuto District,2,Timor-Leste
+Manufahi Municipality,2,Timor-Leste
+Viqueque Municipality,2,Timor-Leste
+Indonesia,1,0
+Aceh,2,Indonesia
+Bali,2,Indonesia
+Banten,2,Indonesia
+Bengkulu,2,Indonesia
+DI Yogyakarta,2,Indonesia
+DKI Jakarta,2,Indonesia
+Gorontalo,2,Indonesia
+Jambi,2,Indonesia
+Jawa Barat,2,Indonesia
+Jawa Tengah,2,Indonesia
+Jawa Timur,2,Indonesia
+Kalimantan Barat,2,Indonesia
+Kalimantan Selatan,2,Indonesia
+Kalimantan Tengah,2,Indonesia
+Kalimantan Timur,2,Indonesia
+Kalimantan Utara,2,Indonesia
+Kepulauan Bangka Belitung,2,Indonesia
+Kepulauan Riau,2,Indonesia
+Lampung,2,Indonesia
+Maluku,2,Indonesia
+Maluku Utara,2,Indonesia
+Nusa Tenggara Barat,2,Indonesia
+Nusa Tenggara Timur,2,Indonesia
+Papua,2,Indonesia
+Papua Barat,2,Indonesia
+Riau,2,Indonesia
+Sulawesi Barat,2,Indonesia
+Sulawesi Selatan,2,Indonesia
+Sulawesi Tengah,2,Indonesia
+Sulawesi Tenggara,2,Indonesia
+Sulawesi Utara,2,Indonesia
+Sumatera Barat,2,Indonesia
+Sumatera Selatan,2,Indonesia
+Sumatera Utara,2,Indonesia
+Laos,1,0
+Attapeu Province,2,Laos
+Bokeo Province,2,Laos
+Bolikhamsai Province,2,Laos
+Champasak Province,2,Laos
+Houaphanh Province,2,Laos
+Khammouane Province,2,Laos
+Luang Namtha Province,2,Laos
+Luang Prabang Province,2,Laos
+Oudomxay Province,2,Laos
+Phongsaly Province,2,Laos
+Sainyabuli Province,2,Laos
+Salavan Province,2,Laos
+Savannakhet Province,2,Laos
+Sekong Province,2,Laos
+Vientiane Prefecture,2,Laos
+Vientiane Province,2,Laos
+Xaisomboun,2,Laos
+Xaisomboun Province,2,Laos
+Xiangkhouang Province,2,Laos
+Malaysia,1,0
+Johor,2,Malaysia
+Kedah,2,Malaysia
+Kelantan,2,Malaysia
+Kuala Lumpur,2,Malaysia
+Labuan,2,Malaysia
+Malacca,2,Malaysia
+Negeri Sembilan,2,Malaysia
+Pahang,2,Malaysia
+Penang,2,Malaysia
+Perak,2,Malaysia
+Perlis,2,Malaysia
+Putrajaya,2,Malaysia
+Sabah,2,Malaysia
+Sarawak,2,Malaysia
+Selangor,2,Malaysia
+Terengganu,2,Malaysia
+Myanmar,1,0
+Ayeyarwady Region,2,Myanmar
+Bago,2,Myanmar
+Chin State,2,Myanmar
+Kachin State,2,Myanmar
+Kayah State,2,Myanmar
+Kayin State,2,Myanmar
+Magway Region,2,Myanmar
+Mandalay Region,2,Myanmar
+Mon State,2,Myanmar
+Naypyidaw Union Territory,2,Myanmar
+Rakhine State,2,Myanmar
+Sagaing Region,2,Myanmar
+Shan State,2,Myanmar
+Tanintharyi Region,2,Myanmar
+Yangon Region,2,Myanmar
+Philippines,1,0
+Abra,2,Philippines
+Agusan del Norte,2,Philippines
+Agusan del Sur,2,Philippines
+Aklan,2,Philippines
+Albay,2,Philippines
+Antique,2,Philippines
+Apayao,2,Philippines
+Aurora,2,Philippines
+Autonomous Region in Muslim Mindanao,2,Philippines
+Basilan,2,Philippines
+Bataan,2,Philippines
+Batanes,2,Philippines
+Batangas,2,Philippines
+Benguet,2,Philippines
+Bicol,2,Philippines
+Biliran,2,Philippines
+Bohol,2,Philippines
+Bukidnon,2,Philippines
+Bulacan,2,Philippines
+Cagayan,2,Philippines
+Cagayan Valley,2,Philippines
+Calabarzon,2,Philippines
+Camarines Norte,2,Philippines
+Camarines Sur,2,Philippines
+Camiguin,2,Philippines
+Capiz,2,Philippines
+Caraga,2,Philippines
+Catanduanes,2,Philippines
+Cavite,2,Philippines
+Cebu,2,Philippines
+Central Luzon,2,Philippines
+Central Visayas,2,Philippines
+Compostela Valley,2,Philippines
+Cordillera Administrative,2,Philippines
+Cotabato,2,Philippines
+Davao,2,Philippines
+Davao del Norte,2,Philippines
+Davao del Sur,2,Philippines
+Davao Occidental,2,Philippines
+Davao Oriental,2,Philippines
+Dinagat Islands,2,Philippines
+Eastern Samar,2,Philippines
+Eastern Visayas,2,Philippines
+Guimaras,2,Philippines
+Ifugao,2,Philippines
+Ilocos,2,Philippines
+Ilocos Norte,2,Philippines
+Ilocos Sur,2,Philippines
+Iloilo,2,Philippines
+Isabela,2,Philippines
+Kalinga,2,Philippines
+La Union,2,Philippines
+Laguna,2,Philippines
+Lanao del Norte,2,Philippines
+Lanao del Sur,2,Philippines
+Leyte,2,Philippines
+Maguindanao,2,Philippines
+Marinduque,2,Philippines
+Masbate,2,Philippines
+Metro Manila,2,Philippines
+Mimaropa,2,Philippines
+Misamis Occidental,2,Philippines
+Misamis Oriental,2,Philippines
+Mountain Province,2,Philippines
+Negros Occidental,2,Philippines
+Negros Oriental,2,Philippines
+Northern Mindanao,2,Philippines
+Northern Samar,2,Philippines
+Nueva Ecija,2,Philippines
+Nueva Vizcaya,2,Philippines
+Occidental Mindoro,2,Philippines
+Oriental Mindoro,2,Philippines
+Palawan,2,Philippines
+Pampanga,2,Philippines
+Pangasinan,2,Philippines
+Quezon,2,Philippines
+Quirino,2,Philippines
+Rizal,2,Philippines
+Romblon,2,Philippines
+Sarangani,2,Philippines
+Siquijor,2,Philippines
+Soccsksargen,2,Philippines
+Sorsogon,2,Philippines
+South Cotabato,2,Philippines
+Southern Leyte,2,Philippines
+Sultan Kudarat,2,Philippines
+Sulu,2,Philippines
+Surigao del Norte,2,Philippines
+Surigao del Sur,2,Philippines
+Tarlac,2,Philippines
+Tawi-Tawi,2,Philippines
+Western Samar,2,Philippines
+Western Visayas,2,Philippines
+Zambales,2,Philippines
+Zamboanga del Norte,2,Philippines
+Zamboanga del Sur,2,Philippines
+Zamboanga Peninsula,2,Philippines
+Zamboanga Sibugay,2,Philippines
+Singapore,1,0
+Central Singapore,2,Singapore
+North East,2,Singapore
+North West,2,Singapore
+South East,2,Singapore
+South West,2,Singapore
+Thailand,1,0
+Amnat Charoen,2,Thailand
+Ang Thong,2,Thailand
+Bangkok,2,Thailand
+Bueng Kan,2,Thailand
+Buri Ram,2,Thailand
+Chachoengsao,2,Thailand
+Chai Nat,2,Thailand
+Chaiyaphum,2,Thailand
+Chanthaburi,2,Thailand
+Chiang Mai,2,Thailand
+Chiang Rai,2,Thailand
+Chon Buri,2,Thailand
+Chumphon,2,Thailand
+Kalasin,2,Thailand
+Kamphaeng Phet,2,Thailand
+Kanchanaburi,2,Thailand
+Khon Kaen,2,Thailand
+Krabi,2,Thailand
+Lampang,2,Thailand
+Lamphun,2,Thailand
+Loei,2,Thailand
+Lop Buri,2,Thailand
+Mae Hong Son,2,Thailand
+Maha Sarakham,2,Thailand
+Mukdahan,2,Thailand
+Nakhon Nayok,2,Thailand
+Nakhon Pathom,2,Thailand
+Nakhon Phanom,2,Thailand
+Nakhon Ratchasima,2,Thailand
+Nakhon Sawan,2,Thailand
+Nakhon Si Thammarat,2,Thailand
+Nan,2,Thailand
+Narathiwat,2,Thailand
+Nong Bua Lam Phu,2,Thailand
+Nong Khai,2,Thailand
+Nonthaburi,2,Thailand
+Pathum Thani,2,Thailand
+Pattani,2,Thailand
+Pattaya,2,Thailand
+Phangnga,2,Thailand
+Phatthalung,2,Thailand
+Phayao,2,Thailand
+Phetchabun,2,Thailand
+Phetchaburi,2,Thailand
+Phichit,2,Thailand
+Phitsanulok,2,Thailand
+Phra Nakhon Si Ayutthaya,2,Thailand
+Phrae,2,Thailand
+Phuket,2,Thailand
+Prachin Buri,2,Thailand
+Prachuap Khiri Khan,2,Thailand
+Ranong,2,Thailand
+Ratchaburi,2,Thailand
+Rayong,2,Thailand
+Roi Et,2,Thailand
+Sa Kaeo,2,Thailand
+Sakon Nakhon,2,Thailand
+Samut Prakan,2,Thailand
+Samut Sakhon,2,Thailand
+Samut Songkhram,2,Thailand
+Saraburi,2,Thailand
+Satun,2,Thailand
+Si Sa Ket,2,Thailand
+Sing Buri,2,Thailand
+Songkhla,2,Thailand
+Sukhothai,2,Thailand
+Suphan Buri,2,Thailand
+Surat Thani,2,Thailand
+Surin,2,Thailand
+Tak,2,Thailand
+Trang,2,Thailand
+Trat,2,Thailand
+Ubon Ratchathani,2,Thailand
+Udon Thani,2,Thailand
+Uthai Thani,2,Thailand
+Uttaradit,2,Thailand
+Yala,2,Thailand
+Yasothon,2,Thailand
+Vietnam,1,0
+An Giang,2,Vietnam
+Bà Rịa-Vũng Tàu,2,Vietnam
+Bắc Giang,2,Vietnam
+Bắc Kạn,2,Vietnam
+Bạc Liêu,2,Vietnam
+Bắc Ninh,2,Vietnam
+Bến Tre,2,Vietnam
+Bình Dương,2,Vietnam
+Bình Định,2,Vietnam
+Bình Phước,2,Vietnam
+Bình Thuận,2,Vietnam
+Cà Mau,2,Vietnam
+Cần Thơ,2,Vietnam
+Cao Bằng,2,Vietnam
+Đà Nẵng,2,Vietnam
+Đắk Lắk,2,Vietnam
+Đắk Nông,2,Vietnam
+Điện Biên,2,Vietnam
+Đồng Nai,2,Vietnam
+Đồng Tháp,2,Vietnam
+Gia Lai,2,Vietnam
+Hà Giang,2,Vietnam
+Hà Nam,2,Vietnam
+Hà Nội,2,Vietnam
+Hà Tĩnh,2,Vietnam
+Hải Dương,2,Vietnam
+Hải Phòng,2,Vietnam
+Hậu Giang,2,Vietnam
+Hồ Chí Minh,2,Vietnam
+Hòa Bình,2,Vietnam
+Hưng Yên,2,Vietnam
+Khánh Hòa,2,Vietnam
+Kiên Giang,2,Vietnam
+Kon Tum,2,Vietnam
+Lai Châu,2,Vietnam
+Lâm Đồng,2,Vietnam
+Lạng Sơn,2,Vietnam
+Lào Cai,2,Vietnam
+Long An,2,Vietnam
+Nam Định,2,Vietnam
+Nghệ An,2,Vietnam
+Ninh Bình,2,Vietnam
+Ninh Thuận,2,Vietnam
+Phú Thọ,2,Vietnam
+Phú Yên,2,Vietnam
+Quảng Bình,2,Vietnam
+Quảng Nam,2,Vietnam
+Quảng Ngãi,2,Vietnam
+Quảng Ninh,2,Vietnam
+Quảng Trị,2,Vietnam
+Sóc Trăng,2,Vietnam
+Sơn La,2,Vietnam
+Tây Ninh,2,Vietnam
+Thái Bình,2,Vietnam
+Thái Nguyên,2,Vietnam
+Thanh Hóa,2,Vietnam
+Thừa Thiên-Huế,2,Vietnam
+Tiền Giang,2,Vietnam
+Trà Vinh,2,Vietnam
+Tuyên Quang,2,Vietnam
+Vĩnh Long,2,Vietnam
+Vĩnh Phúc,2,Vietnam
+Yên Bái,2,Vietnam

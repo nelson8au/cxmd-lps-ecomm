@@ -1,0 +1,146 @@
+{extend name="common/main"/}
+{block name="body"}
+    <div class="main-title">
+        <h2>Online Upgrade</h2>
+    </div>
+    <div class="clearfix with-padding">
+
+        <div class="clearfix">
+            <div class="alert alert-primary-inverse with-icon">
+                <i class="icon-info-sign"></i>
+                <div class="content">Each upgrade automatically backs up the original files. Path: {$backupPath}</div>
+            </div>
+            <div class="alert alert-danger-inverse with-icon">
+                <i class="icon-info-sign"></i>
+                <div class="content">It is recommended to disable the website in system settings during an online upgrade. <a class="alert-link" href="{:url('admin/config/group',['id'=>4])}">Click here to disable the website</a>！</div>
+            </div>
+
+            {if $upgrade}
+
+            <div class="alert alert-warning-inverse with-icon">
+                <i class="icon-info-sign"></i>
+                <div class="content">Please back up the database before performing an online upgrade to prevent data loss in case the upgrade fails!</div>
+            </div>
+
+            <form id="migration" class="form-horizontal" role="form" method="post">
+                <legend>An upgradable version has been detected</legend>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Version</label>
+                    <div class="col-md-10">
+                        <div class="form-control-static">
+                            <p>Currect Version{$localVersion}</p>
+                            <p>Latest Version{$cloudVersion['version']}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">New Version Upgrade Instructions</label>
+                    <div class="col-md-10">
+                        <div class="form-control-static">
+                            {:htmlspecialchars_decode($cloudVersion['remark'])}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Release Time</label>
+                    <div class="col-md-10">
+                        <div class="form-control-static">
+
+                            {$cloudVersion['create_time']|date='Y-m-d H:i:s'}
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Upgrade Agreement</label>
+                    <div class="col-md-10">
+                        <div class="">
+                            <div class="checkbox">
+
+                                <input type="checkbox" name="box" id="agreement_0">
+                                <label for="agreement_0">I have backed up the relevant files</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" name="box" id="agreement_1">
+                                <label for="agreement_1"> I agree with the official update procedure and voluntarily accept the risks associated with the upgrade</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" name="box" id="agreement_2">
+                                <label for="agreement_2"> I understand and appreciate the hard work of the official team and will click the upgrade button with a grateful attitude</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <button type="button" id="oneupdate" class="btn btn-lg btn-primary">一键更新</button>
+                    </div>
+                </div>
+            </form>
+            <!--确认对话框-->
+            <div class="modal modal-for-page fade" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">Confirm Online Upgrade to Version {$cloudVersion['version']}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Hey! Don't forget to back up your files and data before confirming～</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="yesupdate" class="btn btn-primary">确认升级</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">我再想想...</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--确认对话框END-->
+            {else /}
+                <div class="alert alert-info-inverse with-icon">
+                    <i class="icon-info-sign"></i>
+                    <div class="content">
+                        <h3>Currect Version：<span id="localVer">{$localVersion}</span></h3>
+                        <h3>Latest Version：<span id="cloudVer">{$cloudVersion['version']}</span></h3>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning-inverse with-icon">
+                    <i class="icon-ok-sign"></i>
+                    <div class="content"><h3>Already on the latest version</h3></div>
+                </div>
+                <div class="checkButtonBox">
+                    <button class="btn btn-block btn-lg btn-primary" id="checkVersion" type="button">Check Again</button>
+                </div>
+            {/if}
+        </div>
+    </div>
+
+{/block}
+{block name="script"}
+<script>
+    $(function(){
+        $('#oneupdate').click(function(){
+                var a = $("#agreement_0").is(':checked');
+                var b = $("#agreement_1").is(':checked');
+                var c = $("#agreement_2").is(':checked');
+                if(a && b && c) {
+                    $('#myModal').modal();
+                } else {
+                    toast.error("Sorry, please carefully read and confirm the update agreement before proceeding!");
+                    return false;
+                }
+        });
+        $('#yesupdate').click(function(){
+            window.location.href = "{:url('update/start',['version' => $cloudVersion['version'],'app_name' => $appName])}"
+        });
+        $('#checkVersion').click(function(){
+            $('#checkVersion').html('Checking... The page will soon redirect.');
+            window.location.href='{:Url("admin/update/index")}';
+        });
+    });
+</script>
+{/block}
+

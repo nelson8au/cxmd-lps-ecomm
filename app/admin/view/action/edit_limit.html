@@ -1,0 +1,197 @@
+{extend name="common/main"/}
+
+{block name="body"}
+	<div class="main-title cf">
+		<h2>Add/Edit Action Rule</h2>
+	</div>
+
+	<div class="with-padding">
+
+        <form action="{:url('editLimit')}" method="post" class="form-horizontal ajax-form">
+                    
+            <div class="builder_item hidden">
+                <label class="item-label">Item</label>
+                <div class="controls">
+                    <input type="hidden" name="id" value="{$limit.id|default=0}" class="text input-large form-control" placeholder="无需填写" readonly="">
+                </div>
+            </div>
+                     
+            <div class="builder_item">
+                <label class="item-label">Title</label>
+                <div class="controls">
+                    <input type="text" name="title" value="{$limit.title|default=''}" class="text input-large form-control">
+                </div>
+            </div>
+                      
+            <div class="builder_item">
+                <label class="item-label">Name</label>
+                <div class="controls">
+                    <input type="text" name="name" value="{$limit.name|default=''}" class="text input-large form-control">
+                </div>
+            </div>
+                                        
+            <div class="builder_item">
+                <label class="item-label">Module</label>
+                <div class="controls">
+                    <select name="module" class="form-control">
+                        <option value="all">System</label>
+                        {volist name="modules" id="vo"}
+                        <option value="{$vo.name}">{$vo.alias}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+                    
+            <div class="builder_item">
+                <label class="item-label">Frequency</label>
+                <div class="controls">
+                    <input type="text" name="frequency" value="{$limit.frequency|default=1}" class="text input-large form-control">
+                </div>
+            </div>
+
+            <div class="builder_item">
+                <label class="item-label">
+                    Time Unit<span class="suggest check-tips">（Time Unit）</span>
+                </label>
+                <div class="controls">
+                    <div class="clearfix" style="width:400px;">
+                        <input type="text" name="time_number" value="1" class=" pull-left text input-large form-control" style="width:295px;margin-right:5px">
+                        <select name="time_unit" class="pull-left form-control" style="width:100px">
+                            <option value="second">Second</option>
+                            <option value="minute" selected="">Minute</option>
+                            <option value="hour">Hour</option>
+                            <option value="day">Day</option>
+                            <option value="week">Week</option>
+                            <option value="month">Month</option>
+                            <option value="year">Year</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="builder_item">
+                <label class="item-label">
+                    Penalties <span class="suggest check-tips">(Multiple selections allowed)</span>
+                </label>
+                <div class="controls">
+                    <div class="chosen chosen_punish">
+                        <select data-placeholder="" name="punish[]" class="chosen-select form-control" tabindex="-1" multiple="">
+                            {if in_array('warning', $limit['punish'])}
+                            <option value="warning" selected>Warn and Ban</option>
+                            {else}
+                            <option value="warning">Warn and Ban</option>
+                            {/if}
+                            {if in_array('logout_account', $limit['punish'])}
+                            <option value="logout_account" selected>Force Logout</option>
+                            {else}
+                            <option value="logout_account">Force Logout</option>
+                            {/if}
+                            {if in_array('logout_account', $limit['punish'])}
+                            <option value="logout_account" selected>Force Logout</option>
+                            {else}
+                            <option value="logout_account">Force Logout</option>
+                            {/if}
+                            {if in_array('ban_account', $limit['punish'])}
+                            <option value="ban_account" selected>Suspend Account</option>
+                            {else}
+                            <option value="ban_account">Suspend Account</option>
+                            {/if}
+                            {if in_array('ban_ip', $limit['punish'])}
+                            <option value="ban_ip" selected>Block IP</option>
+                            {else}
+                            <option value="ban_ip">Block IP</option>
+                            {/if}
+                        </select>
+                        
+                        <script>
+                        $(function(){
+                            $('.chosen_punish select.chosen-select').chosen({
+                                lang:'zh_cn',
+                                width:'100%',
+                                no_results_text: 'Not Found',    // 当检索时没有找到匹配项时显示的提示文本
+                                disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
+                                search_contains: true         // 从任意位置开始检索
+                            });
+                        });
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+                                        
+            <div class="builder_item">
+                <label class="item-label">Send Notification</label>
+                <div class="controls">
+                    <input id="id_if_message_1" name="if_message" value="1" type="radio">
+                    <label for="id_if_message_1"> Yes</label> &nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <input id="id_if_message_0" name="if_message" value="0" type="radio" checked="">
+                    <label for="id_if_message_0"> No</label> &nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+
+                                        
+            <div class="builder_item">
+                <label class="item-label">Notification Message Content</label>
+                <div class="controls">
+                    <textarea name="message_content" class="text input-large form-control">{$limit.message_count}</textarea>
+                </div>
+            </div>
+                       
+            <div class="builder_item">
+                <label class="item-label">Action<span class="suggest check-tips"> (Multiple choices allowed; unselected means all actions) </span></label>
+                <div class="controls">
+                    <div class="chosen chosen_action_list">
+                        <select data-placeholder="" name="action_list[]" class="chosen-select form-control" tabindex="2" multiple="">
+                            {volist name="opt_action" id="vo"}
+                            {if in_array($vo.name, $limit['action_list'])}
+                            <option value="{$vo.name}" selected>{$vo.title}</option>
+                            {else}
+                            <option value="{$vo.name}">{$vo.title}</option>
+                            {/if}
+                            {/volist}
+                        </select>
+                        <script>
+                        $(function(){
+                            $('.chosen_action_list select.chosen-select').chosen({
+                                lang:'zh_cn',
+                                width:'100%',
+                                no_results_text: 'Not Found',    // 当检索时没有找到匹配项时显示的提示文本
+                                disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
+                                search_contains: true         // 从任意位置开始检索
+                            });
+                        });
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="builder_item">
+                <label class="item-label">Status</label>
+                <div class="controls">
+                    <select name="status" class="form-control">
+                        <option value="-1">Delete</option>
+                        <option value="0">Disable</option>
+                        <option value="1" selected="">Enable</option>
+                        <option value="2">Not Reviewed</option>
+                    </select>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="form-item">
+                <button class="btn submit-btn btn-success" id="submit" type="submit" target-form="form-horizontal">Confirm</button>  &nbsp;
+                <button onclick="javascript:history.back(-1);return false;" class="btn btn-return">Back</button>  &nbsp;
+            </div>
+        </form>
+    </div>
+{/block}
+
+{block name="style"}
+<link href="__STATIC__/common/lib/zui/lib/chosen/chosen.min.css" rel="stylesheet">
+{/block}
+{block name="script"}
+<script src="__STATIC__/common/lib/zui/lib/chosen/chosen.min.js"></script>
+{/block}
+

@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="col-xs-9">
+    <!--分类下拉框-->
+    <link href="__ZUI__/lib/chosen/chosen.min.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="__ZUI__/lib/chosen/chosen.min.js"></script>
+    {notempty name="category_tree"}
+    <select data-placeholder="Please Select" class="chosen-select form-control" name="category_id" tabindex="2">
+        <option value=""></option>
+        {volist name="category_tree" id="vo"}
+        <option value="{$vo.id}" {if isset($data['category_id']) && $vo.id == $data['category_id']}selected{/if}><b>{$vo.title}</b></option>
+        {notempty name="vo._child"}
+            {volist name="vo._child" id="vo_child"}
+            <option value="{$vo_child.id}" {if  isset($data['category_id']) && $vo_child.id == $data['category_id']}selected{/if}>&nbsp;&nbsp;|---- {$vo_child.title}</option>
+            {/volist}
+        {/notempty}
+        {/volist}
+    </select>
+    {else /}
+    <select data-placeholder="No Select Option" class="chosen-select form-control" name="category_id" tabindex="2">
+    </select>
+    {/notempty}
+    <script>
+    $(function(){
+        $('select.chosen-select').chosen({
+            no_results_text: 'Not Found',    // 当检索时没有找到匹配项时显示的提示文本
+            disable_search_threshold: 8, // n个以下的选择项则不显示检索框
+            search_contains: true,         // 从任意位置开始检索
+            allow_single_deselect: true,
+            search_contains: true,
+        });
+    })
+    </script>
+    </div>
+</div>

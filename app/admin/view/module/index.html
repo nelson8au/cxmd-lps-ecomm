@@ -1,0 +1,115 @@
+{extend name="common/main"/}
+
+{block name="style"}
+
+{/block}
+{block name="body"}
+    <div class="main-title">
+        <h2>Module Management</h2>
+    </div>
+
+    <div class="with-padding">
+
+        <div class="button-box tool-box clearfix">
+            <ul class="pull-left nav nav-pills nav-warning">
+                <li id="type_all"><a href="{:url('index', ['type'=>'all'])}">ALL</a></li>
+                <li id="type_installed"><a href="{:url('index', ['type'=>'installed'])}">Installed</a></li>
+                <li id="type_uninstalled"><a href="{:url('index', ['type'=>'uninstalled'])}">Not Installed</a></li>
+                <script>
+                    $('#type_{$type}').addClass('active');
+                </script>
+            </ul>
+            <div class="pull-right">
+                <a href="{:url('index',array_merge($_GET,array('refresh'=>1)))}" class="btn btn-default">
+                    <i class="icon-undo"></i>
+                    <span>Refresh</span>
+                </a>
+            </div>
+        </div>
+
+        <section class="module-list cards clearfix">
+            {if count($modules) == 0}
+            {include file="common/_empty"/}
+            {else /}
+            {volist name="modules" id="vo"}
+            <div class="item">
+                <div class="module-list-box" data-id="{$vo.id}" data-url="{$vo.entry}" data-module="{$vo.name}">
+                    <div class="card">
+                        <div class="media-wrapper">
+                            <div class="cover-icon">
+                                <a href="{:url($vo.entry)}" target="_blank">
+                                    <img class="images" src="{$vo.icon_200}"/>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <div class="card-heading title">
+                                <h3>{$vo.alias} <small>{$vo.version}</small></h1></h3>
+                            </div>
+                            <div class="card-content text-muted">
+                                <p class="text-muted text-ellipsis" title="{$vo.summary}">{$vo.summary}</p>
+                                <p class="">Module ID：{$vo.name}</p>
+                                <p class="text-muted text-ellipsis">
+                                    <span>Developer：</span> 
+                                    <a style="color: #666">{$vo.developer}</a></p>
+                            </div>
+                            
+                            <div class="card-actions clearfix">
+                            {if $vo['is_setup'] == 1}
+                                <div class="app-action">
+                                    <!--进入-->
+                                    <a class="btn btn-info go" href="{:url($vo.entry)}">Enter Mondule</a>
+                                    <!--更新-->
+                                    {if $vo['upgrade'] == 1}
+                                    {if $vo['expired'] == 1}
+                                    <a class="btn btn-danger upgrade" href="javascript:;" data-rule="upgradeExpired">
+                                        <i class="fa fa-cloud-download" aria-hidden="true"></i> 
+                                        Update
+                                    </a>
+                                    {else}
+                                    <a class="btn btn-danger upgrade" href="{:url('admin/Update/index',['appid' => $vo.appid ,'app_name' => $vo.name])}">
+                                        <i class="fa fa-cloud-download" aria-hidden="true"></i> 
+                                        Update
+                                    </a>
+                                    {/if}
+                                    {/if}
+                                </div>
+                                <div class="app-manage">
+                                    <a class="btn btn-primary " href="{:url('edit', ['id' => $vo['id']])}">Edit</a>
+                                    <a class="btn btn-warning" href="{:url('menu', ['app' => $vo['name']])}">Permission Menu/Interface</a>
+                                    <button type="button" class="btn btn-danger" data-remote="{:url('uninstall', ['id' => $vo['id']])}" data-toggle="modal" data-size="sm">Uninstall</a>
+                                </div>
+                            {else/}
+                                <!--进入-->
+                                <a class="btn btn-block btn-default disabled" href="{:url($vo.entry)}">Enter Mondule</a>
+                                <div class="app-manage">
+                                    <a class="btn btn-primary " href="{:url('edit', ['id' => $vo['id']])}">Edit</a>
+                                    <a class="btn btn-warning" href="{:url('menu', ['app' => $vo['name']])}">Permission Menu/Interface</a>
+                                    {if $vo.source=='local'}
+                                    <button type="button" class="btn btn-success" data-remote="{:url('install', ['name' => $vo['name']])}" data-toggle="modal" data-size="sm">Install</a>
+                                    {else}
+                                    <a class="btn  btn-success" href="{:url('admin/update/start', ['app_name' => $vo['name'], 'version'=>$vo['version'], 'scene'=>'setup'])}">Install</a>
+                                    {/if}
+                                </div>
+                            {/if}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/volist}
+            {/if}
+        </section>
+        
+        <!--模块分页-->
+        <div class="pager">
+            {:htmlspecialchars_decode($page)}
+        </div>
+    </div>
+
+{/block}
+{block name="script"}
+<script>
+
+</script>
+{/block}

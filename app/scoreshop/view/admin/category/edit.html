@@ -1,0 +1,205 @@
+{extend name="../../admin/view/common/main"/}
+{block name="style"}
+{include file="admin/common/base"}
+{/block}
+
+{block name="body"}
+<ol class="breadcrumb">
+  <i class="icon icon-angle-left"></i>
+  <li>
+    <a href="{:url('lists')}">Category Management</a>
+  </li>
+  <li>
+    Add/Edit Category
+  </li>
+</ol>
+<form action="" method="post" class="form form-horizontal ajax-form card" id="form1">
+  <input type="hidden" name="title" class="form-control" value="{$category_data['id']}" />
+  <!--显示父级分类-->
+  <div class="form-title">
+    <h4>Add/Edit Category</h4>
+  </div>
+  <div class="form-body">
+    {if !empty($pid)}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Parent Category</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" class="form-control" value="{$parent['title']}" readonly />
+        <input type="hidden" name="pid" value="{$pid}" />
+      </div>
+    </div>
+    {/if}
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Category Name (English)</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title" class="form-control" value="{$category_data['title']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Category Image</label>
+      <div class="form-controls col-sm-8">
+        {:single_image_upload('cover', $category_data['cover'])}
+        <div class="help-block">Recommended size: 300x300px, aspect ratio of 1:1, supports jpg, png</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Sort</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="sort" class="form-control" value="{$category_data['sort']}" />
+        <div class="help-block">The larger the number, the higher the priority.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Status</label>
+      <div class="form-controls radio-controls col-sm-8">
+        {if $category_data['status'] == 1 || empty($category_data['id'])}
+        <input type="radio" name="status" id="is_status-1" value="1" checked>
+        <label class="radio-inline" for="is_status-1">Enable</label>
+        <input type="radio" name="status" id="is_status-0" value="0">
+        <label class="radio-inline" for="is_status-0"> Disable</label>
+        {else}
+        <input type="radio" name="status" id="is_status-1" value="1">
+        <label class="radio-inline" for="is_status-1">Enable</label>
+        <input type="radio" name="status" id="is_status-0" value="0" checked>
+        <label class="radio-inline" for="is_status-0"> Disable</label>
+        {/if}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label"></label>
+      <div class="form-controls col-sm-8">
+        <input type="submit" name="submit" value="Submit" class="btn btn-primary" />
+      </div>
+    </div>
+  </div>
+</form>
+
+<form action="javascript:void(0)" method="post"
+  class="form form-horizontal ajax-form card cxmd-category-translation-form">
+  <input type="hidden" name="category_id" class="form-control" value="{$category_data['id']}" />
+  <!--显示父级分类-->
+  <div class="form-title">
+    <h4>Translation for Category Name</h4>
+  </div>
+  <div class="form-body">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Arabic</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_ar" class="form-control" value="{$category_data['title_ar']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Hindi</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_hi" class="form-control" value="{$category_data['title_hi']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Indonesia</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_id" class="form-control" value="{$category_data['title_id']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Japanese</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_ja" class="form-control" value="{$category_data['title_ja']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Thai</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_th" class="form-control" value="{$category_data['title_th']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Vietnamese</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_vi" class="form-control" value="{$category_data['title_vi']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Melayu</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_ms" class="form-control" value="{$category_data['title_ms']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Chinese</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_zh" class="form-control" value="{$category_data['title_zh']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Portuguese</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_pt" class="form-control" value="{$category_data['title_pt']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Spanish</label>
+      <div class="form-controls col-sm-8">
+        <input type="text" name="title_es" class="form-control" value="{$category_data['title_es']|default=''}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label"></label>
+      <div class="form-controls col-sm-8">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  const cxmdCategoryTranslationForm = document.querySelector('.cxmd-category-translation-form');
+  if (cxmdCategoryTranslationForm) {
+    if (!window.location.search) {
+      cxmdCategoryTranslationForm.style.display = 'none';
+    } else {
+      cxmdCategoryTranslationForm.addEventListener('submit', function () {
+        const addressFormData = new FormData(cxmdCategoryTranslationForm);
+        const addressFormDataObject = {};
+        addressFormData.forEach(function (value, key) {
+          addressFormDataObject[key] = value;
+        });
+        fetch(`${window.location.origin}/api/ScoreshopGood/editCategoryTranslation`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(addressFormDataObject),
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (response.code !== 200) {
+              alert(response.msg);
+            } else {
+              cxmdCategoryTranslationForm.reset();
+              alert(response.msg);
+              window.location.href = '/scoreshop/admin.category/lists.html';
+            }
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      });
+    }
+  }
+</script>
+{/block}

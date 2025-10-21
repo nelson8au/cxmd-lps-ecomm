@@ -1,0 +1,419 @@
+{extend name="../../common/view/main"/}
+{block name="style"}
+<link href="__STATIC__/ucenter/css/main.min.css" rel="stylesheet">
+<link rel="stylesheet" href="__STATIC__/ucenter/lib/paging/my-page.css">
+{/block}
+{block name="body"}
+
+<div id="main-container" class="user-config">
+    <div class="container-fixed clearfix">
+        <div class="left-slide">
+            {include file="common/_slide"/}
+        </div>
+        <div class="right-content">
+            <div id="center" class="orders-lists">
+                <h4 class="lists-title">My Orders</h4>
+                <ul class="nav nav-tabs clearfix">
+                    <li class="{if $status==='all'}active{/if}"><a href="{:url('lists', ['status' => 'all'])}">ALL</a></li>
+                    <li class="{if $status==='1'}active{/if}"><a href="{:url('lists', ['status'=>1])}">Pending Payment</a></li>
+                    <li class="{if $status==='2'}active{/if}"><a href="{:url('lists', ['status'=>2])}">Awaiting Shipment</a></li>
+                    <li class="{if $status==='3'}active{/if}"><a href="{:url('lists', ['status'=>3])}">Awaiting Receipt</a></li>
+                    <li class="{if $status==='4'}active{/if}"><a href="{:url('lists', ['status'=>4])}">Awaiting Review</a></li>
+                    <li class="{if $status==='5'}active{/if}"><a href="{:url('lists', ['status'=>5])}">Completed</a></li>
+                </ul>
+                <!--列表容器-->
+                <div class="items">
+                    {foreach $lists.data as $k=>$v}
+                    <div class="item">
+                        <div class="base-info">
+                            <span class="">Order No.：{$v['order_no']|default=''}</span>
+                            <span class="">
+                                Create Time：{$v['create_time_str']|default=''}
+                            </span>
+                            {if $v['paid'] == 1}
+                            <span class="">
+                                Payment Time: {$v['paid_time_str']|default=''}
+                            </span>
+                            {else}
+                            <span class="">
+                                Payment Time: Unpaid
+                            </span>
+                            {/if}
+
+                            <span class="pull-right text-right status">
+                                {if $v['refund'] > 0}
+                                    {$v['refund_str']}
+                                {else}
+                                {$v['status_str']}
+                                {/if}
+                            </span>
+                        </div>
+                        <table class="table table-bordered muu-table">
+                            <thead>
+                                <tr>
+                                    <th>Order Information</th>
+                                    <th>Amount</th>
+                                    <th width=150>Quantity/Specifications</th>
+                                    <th>Status</th>
+                                    <th width=100>Action</th>
+                                </tr>
+                            </thead>
+    
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="products clearfix">
+                                            <div class="cover">
+                                                <img src="{$v['products']['cover_100']}">
+                                            </div>
+                                            <div class="info">
+                                                <div class="title text-ellipsis">{$v['products']['title']}</div>
+                                                <div class="description text-ellipsis">{$v['products']['description']}</div>
+                                            </div>
+                                        </div>
+                                        
+                                    </td>
+                                    <td>
+                                        {if ($v.app == 'minishop' || $v.app == 'scoreshop')}
+                                        <span class="text-danger">
+                                            Shipping Fee：{if $v['delivery_fee'] == 0}Waived{else}￥ {$v['delivery_fee']}{/if}
+                                        </span>
+                                        <br />
+                                        {/if}
+                                        {if $v.app == 'scoreshop'}
+                                        <span class="text-danger">
+                                            Unit Price： {$v['price']} Points
+                                        </span>
+                                        <br />
+                                        <span class="text-danger">
+                                            Total： {$v['paid_fee']} Points
+                                        </span>
+                                        {else}
+                                        <span class="text-danger">
+                                            Unit Price： {$v['price']}  Points
+                                        </span>
+                                        <br />
+                                        <span class="text-danger">
+                                            Total： {$v['paid_fee']}  Points
+                                        </span>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {if $v['order_info_type'] == 'goods'}
+                                        <p>Quantity：{$v['products']['quantity']}</p>
+                                        <p>Spec：{$v['products']['sku']}</p>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {if $v['paid'] == 1}
+                                            <span class="paid-status text-success">{$v['paid_str']}</span>
+                                            {else}
+                                            <span class="paid-status text-danger">{$v['paid_str']}</span>
+                                            {/if}
+                                            <br />
+                                            {if $v['status'] == 3}
+                                            {if $v['evaluate'] == 0 || empty($v['evaluate'])}
+                                            <span class="text-danger">Not Reviewed</span>
+                                            {else}
+                                            <span class="text-success">Reviewed</span>
+                                            {/if}
+                                            {/if}
+                                        </div>
+                                    </td>
+                                    <td class="action">
+
+                                        {if $v['status'] == 1}
+                                        <button type="button" class="btn btn-success btn-sm" data-order-no="{$v.order_no}" data-role="pay">
+                                            Pay Now
+                                        </button>
+                                        <a href="{:url($v.app . '/api.orders/cancel')}" class="btn btn-danger btn-sm ajax-post" target-form="action-form-{$v.id}" data-confirm="Are you sure you want to proceed with the cancellation?">
+                                            Cancel Order
+                                        </a>
+                                        {/if}
+    
+                                        {if $v['status'] == 2 && 0 >= $v['refund']}
+                                        {if $v.app == 'minishop'}
+                                            <a href="{:url($v.app . '/api.orders/refund')}" class="btn btn-default btn-sm ajax-post" target-form="action-form-{$v.id}" data-confirm="Are you sure you want to proceed with the refund request?">
+                                                Refund Request
+                                            </a>
+                                        {/if}
+                                        {/if}
+    
+                                        {if $v['status'] == 3 && ($v.app == 'minishop' || $v.app == 'scoreshop')}
+                                            {if $v['products']['express'] == 1}
+                                            <a data-url="{:url($v.app.'/api.Orders/logistic',['id'=>$v['id']])}" data-toggle="modal" data-target="#logisticModal" class="btn btn-primary btn-sm">
+                                                Track Logistics
+                                            </a>
+                                            {/if}
+
+                                            {if $v['products']['express'] == 0}
+                                            <a data-url="{:url('detail',['id'=>$v['id']])}" data-toggle="modal" data-target="#sendOutModal" class="btn btn-primary btn-sm">
+                                                Shipping Info.
+                                            </a>
+                                            {/if}
+
+                                            {if $v.app == 'minishop'}
+                                            <a href="{:url($v.app . '/api.orders/refund')}" class="btn btn-default btn-sm ajax-post" target-form="action-form-{$v.id}" data-confirm="Are you sure you want to proceed with the refund request?">
+                                                Refund Request
+                                            </a>
+                                            {/if}
+    
+                                            {if 1 > $v['refund']}
+                                            <a href="{:url('status',['id'=>$v['id'],'status'=>4])}" class="btn btn-danger btn-sm confirm ajax-post" data-confirm="Confirm to proceed order receipt confirmation!">
+                                                Confirm Receipt
+                                            </a>
+                                            {/if}
+                                        {/if}
+    
+                                        {if $v['status'] == 4}
+                                        <a data-toggle="modal" class="btn btn-warning btn-sm" data-target="#evaluateModal" data-toggle="modal" data-order-no="{$v.order_no}" data-type="{$v.order_info_type}" data-type-id="{$v.order_info_id}">
+                                            立即评价
+                                        </a>
+                                        {if ($v.app == 'minishop' || $v.app == 'scoreshop')}
+                                        <a data-url="{:url($v.app.'/api.Orders/logistic',['id'=>$v['id']])}" data-toggle="modal" data-target="#logisticModal" class="btn btn-primary btn-sm">
+                                            Track Logistics
+                                        </a>
+                                        {/if}
+                                        {/if}
+    
+                                        {if $v['refund'] > 0}
+                                        <a data-url="{:url('refund', ['id'=>$v['id']])}" data-refund="{$v['refund']}" data-toggle="modal" data-target="#refundModal" class="btn btn-default btn-sm disabled" disabled>
+                                            {if $v['refund'] == 1}
+                                                退款申请中
+                                            {/if}
+                                            {if $v['refund'] == 2}
+                                                退货中
+                                            {/if}
+                                            {if $v['refund'] == 3}
+                                                已退货
+                                            {/if}
+                                            {if $v['refund'] == 4}
+                                                退款完成
+                                            {/if}
+                                        </a>
+                                        {/if}
+    
+                                        {if $v['status'] == 0}
+                                        <a disabled href="#" class="btn btn-sm disabled">Cancelled</a>
+                                        <a href="{:url($v.app . '/api.Orders/delete')}" class="btn btn-danger btn-sm ajax-post" target-form="action-form-{$v.id}" data-confirm="Are you sure you want to delete this?">
+                                            Delete
+                                        </a>
+                                        {/if}
+                                        <!-- 隐藏域 START -->
+                                        <form class="action-form-{$v.id} hidden">
+                                            <input name="id" value="{$v.id}" />
+                                            <input name="shopid" value="{$shopid}" />
+                                            <input name="app" value="{$v.app}" />
+                                        </form>
+                                        <!-- 隐藏域 END -->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {/foreach}
+                    {if empty($lists.data)}
+                    {include file='../../common/view/empty'}
+                    {/if}
+                </div>
+                <div class="page-section">
+                    {:html_entity_decode($pager)}
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<!--物流查询模态框-->
+<div class="modal fade" id="logisticModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h3 class="modal-title">Track Logistics</h3>
+			</div>
+			<div class="modal-body we7-form form-horizontal">
+				<div class="kdniao_delivery_main">
+					<div class="base_info">
+					</div>
+					<div class="api_info">
+						<p>【Order No.】：<span class="kdniao_OrderCode"></span></p>
+						<p>【Courier】：<span class="kdniao_shipperName"></span><span class="kdniao_shipperCode"></span></p>
+						<p>【Tracking No.】：<span class="kdniao_logisticCode"></span></p>
+						<div class="kdniao_delivery_info">
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--虚拟商品发货信息查询模态框-->
+<div class="modal fade" id="sendOutModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h3 class="modal-title">Shipping Info. Details</h3>
+			</div>
+			<div class="modal-body form-horizontal">
+				<div class="delivery_info">
+
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="evaluateModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h3 class="modal-title">Order Review</h3>
+			</div>
+			<div class="modal-body">
+				<div class="evaluate-section">
+                    <form action="{:url('api/evaluate/edit')}" method="post" class="form ajax-form">
+                        <input type="hidden" name="order_no" value="" />
+                        <input type="hidden" name="type" value="" />
+                        <input type="hidden" name="type_id" value="" />
+                        <div class="form-group">
+                            <label for="exampleInputAccount1">Please Enter a Review</label>
+                            <textarea class="form-control" name="content" row=3 placeholder="Please Enter a Review"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="start-item clearfix" >
+                                <div class="star_score"></div>
+                                <p>Your Rating：<span class="fenshu">5</span> Stars</p>
+                                <div class="attitude"></div>
+                                <input type="hidden" name="value" value="5"/>
+                            </div>
+                        </div> 
+                        <div class="submit">
+                            <button type="submit" class="btn btn-block btn-lg btn-warning" >Confirm</button>
+                        </div>
+                    </form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{/block}
+
+{block name="script"}
+<script src="__STATIC__/ucenter/js/main.min.js"></script>
+<script>
+    $(function () {
+        // 设置当前高亮菜单
+        $("#{$tab}").addClass('active');
+        
+    });
+    $(function(){
+        scoreFun($('.start-item'));
+        //默认选择5分
+        $('.star_score>a:last').click();
+        //显示评分
+        showScoreFun('.show_star');
+    });
+
+    $(function (){
+        // 立即支付
+        $('[data-role="pay"]').click(function(){
+            var order_no = $(this).data('order-no');
+            pay(order_no);
+            // 请求支付
+            function pay(order_no){
+                var url = "{:url('api/pay/pay')}";
+                var data = {
+                    order_no : order_no,
+                    pay_channel: 'weixin',
+                    channel: 'pc'
+                };
+                $.post(url, data, function (ret) {
+                    if(ret.code == 0){
+                        modal_confirm(ret.msg);
+                        return false;
+                    }
+                    if(ret.code == 200){
+                        //至支付页面
+                        toast.show('Success, you will be redirected to the payment page soon.', {
+                            type: 'default',
+                            placement: 'center'
+                        });
+                        setTimeout(function () {
+                            window.location.href = ret.url;
+                        }, 1500);
+                    }
+                });
+            }
+        });
+    });
+
+    $(function(){
+		//物流查询模态框处理
+		$('[data-target="#logisticModal"]').click(function(){
+			var _this = $(this);
+			var url = _this.data('url');
+			var id = _this.data('id');
+			var data = {
+				id : id
+			};
+			$.post(url,data,function (ret) {
+				//console.log(ret);
+				if(ret.code){
+					$('.kdniao_OrderCode').text(ret.data.OrderCode);
+					$('.kdniao_shipperName').text(ret.data.ShipperName);
+					$('.kdniao_shipperCode').text(ret.data.ShipperCode);
+					$('.kdniao_logisticCode').text(ret.data.LogisticCode);
+
+					if(ret.data.Traces) {
+						var _html = '<ul class="list-group">';
+						$.each(ret.data.Traces,function(index,value){
+							_html += '<li class="list-group-item">'+
+									'<span class="text-info">'+ value.AcceptTime + '</span>' +
+									'<span>'+ value.AcceptStation + '</span>' +
+									'<span class="text-danger">'+ value.Remark + '</span>' +
+									'</li>';
+						});
+						_html += '</ul>';
+						$('.kdniao_delivery_main .kdniao_delivery_info').html(_html);
+
+					}else{
+						$('.kdniao_delivery_main .kdniao_delivery_info').text('No shipping data found');
+					}				}else{
+					$('.kdniao_delivery_main .kdniao_delivery_info').text(ret.msg);
+				}
+			})
+		});
+    });
+
+    $(function(){
+        // 评价数据处理
+        $('[data-target="#evaluateModal"]').click(function(){
+            var order_no = $(this).data('order-no');
+            var type = $(this).data('type');
+            var type_id = $(this).data('type-id');
+
+            $('#evaluateModal [name="order_no"]').val(order_no);
+            $('#evaluateModal [name="type"]').val(type);
+            $('#evaluateModal [name="type_id"]').val(type_id);
+        })
+    });
+</script>
+
+{/block}

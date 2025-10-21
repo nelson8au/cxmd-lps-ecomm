@@ -1,0 +1,204 @@
+{extend name="../../common/view/main"/}
+{block name="style"}
+<link href="__STATIC__/ucenter/css/main.min.css" rel="stylesheet">
+<link rel="stylesheet" href="__STATIC__/ucenter/lib/paging/my-page.css">
+<style>
+  .pt-5 {
+    padding-top: 3rem;
+  }
+
+  .cxmAddressForm .btn-carnation {
+    background: #58af2c;
+    background-color: #58af2c;
+    color: #fff;
+  }
+
+  .cxmAddressForm input[type="checkbox"] {
+    accent-color: #F8534B;
+  }
+</style>
+{/block}
+{block name="body"}
+
+<div id="main-container" class="user-config">
+  <div class="container-fixed clearfix">
+    <div class="left-slide">
+      {include file="common/_slide"/}
+    </div>
+    <div class="right-content">
+      <div id="center" class="orders-lists">
+        {if isset($address)}
+        <h4 class="lists-title">Edit Address</h4>
+        {else /}
+        <h4 class="lists-title">Add Address</h4>
+        {/if}
+        <div class="pt-5">
+          <form action="javascript:void(0)" method="post" class="form cxmAddressForm">
+            <input type="hidden" name="id" value="{$address->id|default=''}">
+            <input type="hidden" name="uid" value="{$uid|default=''}">
+            <div class="row">
+              <div class="form-group col-lg-6">
+                <label>Full Name</label>
+                <input type="text" class="form-control" name="name" placeholder="Please enter your full name"
+                  value="{$address->name|default=''}" required>
+              </div>
+
+              <div class="form-group col-lg-6">
+                <div class="row">
+                  <div class="col-lg-4">
+                    <label>Prefix</label>
+                    <select class="chosen-select form-control" name="phone_prefix" tabindex="2" required>
+                      {if !isset($address->pos_province) }
+                      <option value="" disabled selected hidden>Phone prefix</option>
+                      {/if}
+                      {volist name="phonePrefixes" id="phonePrefix"}
+                      <option value="{$phonePrefix}" {if isset($address->pos_province) &&
+                        $phonePrefix==$address->pos_province} selected {/if}>
+                        <b>{$phonePrefix}</b>
+                      </option>
+                      {/volist}
+                    </select>
+                  </div>
+                  <div class="col-lg-8">
+                    <label>Phone Number</label>
+                    <input type="number" class="form-control" name="phone" placeholder="Please enter your phone number"
+                      value="{$address->phone|default=''}" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group col-lg-4">
+                <label>Country</label>
+                <select class="chosen-select form-control" name="pos_country" id="country-select" tabindex="2" required>
+                  {if !isset($address->pos_country) }
+                  <option value="" disabled selected hidden>Please select your country</option>
+                  {/if}
+                  {volist name="countries" id="country"}
+                  <option value="{$country.name}" {if isset($address->pos_country) &&
+                    $country.name==$address->pos_country} selected {/if}>
+                    <b>{$country.name}</b>
+                  </option>
+                  {/volist}
+                </select>
+              </div>
+
+              <div class="form-group col-lg-4">
+                <label>Province</label>
+                <select class="chosen-select form-control" name="pos_province" id="province-select" tabindex="2"
+                  required>
+                  {if isset($provinces) }
+                  {volist name="provinces" id="province"}
+                  <option value="{$province.name}" {if isset($address->pos_province) &&
+                    $province.name==$address->pos_province} selected {/if}>
+                    <b>{$province.name}</b>
+                  </option>
+                  {/volist}
+                  {/if}
+                </select>
+              </div>
+
+              <div class="form-group col-lg-4">
+                <label>Postcode</label>
+                <input type="text" class="form-control" name="postcode" placeholder="Please enter postcode"
+                  value="{$address->postcode|default=''}" required>
+              </div>
+
+              <div class="form-group col-lg-12">
+                <label>Address</label>
+                <textarea rows="3" class="form-control" name="address" placeholder="Please enter your address"
+                  required>{$address->address|default=''}</textarea>
+              </div>
+
+              <div class="form-group col-lg-4">
+                {if isset($address->first) && $address->first === 1}
+                <input type="checkbox" name="first" checked id="firstCheckbox">
+                {else /}
+                <input type="checkbox" name="first" id="firstCheckbox">
+                {/if}
+                <label for="firstCheckbox">Default address?</label>
+              </div>
+            </div>
+
+            <div class="submit">
+              <button type="submit" class="btn btn-block btn-lg btn-carnation">Confirm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{/block}
+
+{block name="script"}
+<script src="__STATIC__/ucenter/js/main.min.js"></script>
+<script>
+  $(function () {
+    $("#{$tab}").addClass('active');
+
+    const appHost = "{$appHost}";
+
+    function initEventListener(select, level, targetSelect) {
+      select.addEventListener('change', function () {
+        fetch(`${appHost}/ucenter/Address/districts?value=${this.value}&level=${level}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((res) => res.json())
+          .then((responseData) => {
+            const data = responseData.data;
+            targetSelect.innerHTML = '';
+            data.forEach(element => {
+              const option = document.createElement('option');
+              option.value = element.name;
+              option.label = element.name;
+
+              targetSelect.appendChild(option);
+            });
+          });
+      });
+    }
+
+    const countrySelect = document.querySelector('#country-select');
+    const provinceSelect = document.querySelector('#province-select');
+    if (countrySelect && provinceSelect) {
+      initEventListener(countrySelect, 1, provinceSelect);
+    }
+
+    const cxmAddressForm = document.querySelector('.cxmAddressForm');
+    if (cxmAddressForm) {
+      cxmAddressForm.addEventListener('submit', function () {
+        const addressFormData = new FormData(cxmAddressForm);
+        const addressFormDataObject = {};
+        addressFormData.forEach(function (value, key) {
+          addressFormDataObject[key] = value;
+        });
+        fetch(`${appHost}/api/Address/edit`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(addressFormDataObject),
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (response.code !== 200) {
+              alert(response.msg);
+            } else {
+              cxmAddressForm.reset();
+              alert(response.msg);
+              window.location.href = '/ucenter/address/lists.html';
+            }
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      });
+    }
+  });
+</script>
+
+{/block}

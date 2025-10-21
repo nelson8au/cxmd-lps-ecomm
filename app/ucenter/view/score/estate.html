@@ -1,0 +1,427 @@
+{extend name="../../common/view/main"/}
+
+{block name="style"}
+<link href="__STATIC__/ucenter/css/main.min.css" rel="stylesheet">
+<link href="__STATIC__/ucenter/css/estate.css" rel="stylesheet">
+<link href="__STATIC__/ucenter/css/bootstrap-grid.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/jquery.lineProgressbar.css" />
+{/block}
+
+{block name="body"}
+<div id="main-container" class="user-config">
+  <section class="member-header-section">
+    <div class="row">
+      <div class="col-8 dark-background">
+        <div class="row justify-content-center points-text-container">
+          <img src="/images/estate/member-header/loyalty-points-icon.png" alt="Loyalty Points Icon"
+            class="loyalty-points-icon">
+          {if $isIb==='true' }
+          <div class="loyalty-points-text col-8">Loyalty Points | Partnership</div>
+          {else /}
+          <div class="loyalty-points-text col-8">Loyalty Points</div>
+          {/if}
+        </div>
+
+        <div class="row justify-content-center points-container">
+          <div class="col-auto right-border points-text-center">
+            <p class="points-title-text">Total Points: <span class="points-text">{$clientData['uns_net_lps']}</span></p>
+            <p class="points-title-text">Last settlement date: {$clientData['last_sett_date']}</p>
+          </div>
+          <div class="col-6 points-text-center">
+            {if $isIb==='true' }
+            <p class="points-title-text">Points from own trading accounts: <span>{$clientData['uns_own_trading']}</span>
+            </p>
+            <p class="points-title-text">Points from direct clients trading:
+              <span>{$clientData['uns_dcs_lps_trading']}</span>
+            </p>
+            {else /}
+            <p class="points-title-text">Points from trading accounts: <span>{$clientData['uns_lps_trading']}</span></p>
+            {/if}
+          </div>
+        </div>
+      </div>
+      <div class="col-4 {$currentLevelInLowerCase}-background position-relative">
+        <img src="/images/estate/member-header/{$currentLevelInLowerCase}-badge.png" alt="Member-badge"
+          class="member-badge">
+
+        <div class="member-status-content-container">
+          <p class="member-status">Loyalty Status: <span class="member-current-level">{$currentLevelInLowerCase}</span>
+          </p>
+          <div class="points-required-for-next-level">{$clientData['ls_value']}/{$clientData['next_ls_value']}</div>
+          <div id="points-progress-bar"></div>
+          <p class="unlock-next-text">Earn {$clientData['ls_to_next']} points to unlock <span
+              class="next-level-title">{$nextLevelInLowerCase}</span></p>
+          <p class="last-settlement-text">Last settlement date: {$clientData['last_sett_date']}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="container-fixed clearfix margin-top-15">
+    <div class="left-slide hidden">
+      {include file="common/_slide"/}
+    </div>
+    <div class="right-content" style="width: 100%;">
+      <div id="center" class="score_estate">
+        <div class="estste">
+          <!-- <div class="row">
+            <div class="col">
+              <div class="dashboard-card-subscription">
+                <div class="d-flex first-content">
+                  <label class="subscription-label">
+                    积分抵扣出金手续费状态:
+                    {if $clientData['lp2fee_status'] === true }
+                    已激活
+                    {else /}
+                    未激活
+                    {/if}
+                  </label>
+                  <label class="switch">
+                    {if $clientData['lp2fee_status'] === true }
+                    <input type="checkbox" class="subscription-switch-input" checked>
+                    {else /}
+                    <input type="checkbox" class="subscription-switch-input">
+                    {/if}
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div> -->
+
+          <div>
+            <div class="row bg-mantis">
+              <div class="col">
+                <div class="dashboard-card">
+                  <div class="row">
+                    <div class="col">
+                      <img src="/images/estate/wallet.png" height="40" alt="star">
+                      <span class="wallet-text">Wallet</span>
+                    </div>
+                    <div class="col wallet-settlement-date-container">
+                      <span>Last settlement date: {$clientData['last_sett_date']}</span>
+                    </div>
+                  </div>
+                  <div class="row pt-25">
+                    <div class="col">
+                      <div class="dashboard-card-light-green">
+                        <p>Points available <br> for spending:</p>
+                        <p class="cxmd-point-text">{$clientData['wallet_lps']}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="dashboard-card-light-green">
+                        <p>Points spent <br> (this month):</p>
+                        <p class="cxmd-point-text">{$clientData['lps_spent']}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="dashboard-card-light-green">
+                        <p>Points converted into cash <br> (this month):</p>
+                        {if $isIb==='false' }
+                        <p class="cxmd-point-text">{$clientData['lps2cash']}</p>
+                        {else /}
+                        <p class="cxmd-point-text">{$clientData['lps_cash']}</p>
+                        {/if}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row pt-50">
+            <div class="col">
+              <a class="cxmd-link-button" href="{$clientData['shop_links']}">Go to Points Mall</a>
+            </div>
+            <div class="col">
+              <a class="cxmd-link-button" href="{$clientData['convert_links']}">Convert Points into Cash</a>
+            </div>
+          </div>
+
+          {if $isIb==='true' }
+          <!-- <div class="row pt-50">
+            <div class="col">
+              <div class="dashboard-card-subscription">
+                <div class="first-content">
+                  <span>Direct clients Net Deposit-based LP's status</span>
+                </div>
+                <hr>
+                <div class="green-bg-content">
+                  <p class="unlock-status">Status: Unlocked</p>
+                  <p>You are currently receiving Net Deposit-based LPs.</p>
+                  <p>Your clients are active!</p>
+                </div>
+                <div class="second-content pt-10">
+                  <p class="second-content-text">Direct clients Net Deposits, USD:</p>
+                  <p>{$clientData['dcnd_amt']|default=0}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">Direct clients trading-based points:</p>
+                  <p>{$clientData['dcnd_lps']}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">Coefficient:</p>
+                  <p>{$clientData['tr_nd_lps_coeff']}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">Threshold to unlock Net Deposits-based LPs:</p>
+                  <p>{$thresholdUnlock}</p>
+                </div>
+                <div class="row">
+                  <div class="col p-0">
+                    <div class="third-content">
+                      <p class="third-content-first-text">Unlock feature:</p>
+                    </div>
+                  </div>
+                  <div class="col p-0">
+                    <div class="third-content">
+                      <p>{$clientData['dcnd_amt']|default=0} / {$thresholdUnlock}</p>
+                    </div>
+                  </div>
+                </div>
+                <div id="lp-status-progressbar"></div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="dashboard-card-subscription">
+                <div class="first-content mh-41">
+                  <span>Direct clients Net Deposit High-Water Mark status</span>
+                </div>
+                <hr>
+                <div class="grey-bg-content">
+                  <p>Congratulations! Your level is currently above the previous High-Water Mark!</p>
+                </div>
+                <div class="second-content pt-10">
+                  <p class="second-content-text">Direct clients Net Deposits (this month), USD:</p>
+                  <p>{$clientData['dcnd_amt']|default=0}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">High-Water Mark, USD:</p>
+                  <p>{$clientData['last_hwm_amt']}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">High-Water Mark date:</p>
+                  <p>{$clientData['last_hwm_date']}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">Net Deposits value exceeding the HWM, USD:</p>
+                  <p>{$clientData['exc_hwm_amt']}</p>
+                </div>
+                <div class="row">
+                  <div class="col p-0">
+                    <div class="third-content">
+                      <p class="third-content-first-text">Unlock feature:</p>
+                    </div>
+                  </div>
+                  <div class="col p-0">
+                    <div class="third-content">
+                      <p>{$clientData['dcnd_amt']|default=0} / {$clientData['last_hwm_amt']}</p>
+                    </div>
+                  </div>
+                </div>
+                <div id="mark-status-progressbar"></div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="dashboard-card-subscription">
+                <div class="first-content">
+                  <span>Direct clients Net Deposit Loyalty points Payout amount</span>
+                </div>
+                <hr>
+                <div class="second-content pt-10">
+                  <p class="second-content-text">Net Deposits value exceeding the HWM, USD:</p>
+                  <p>{$clientData['exc_hwm_amt']}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">Points from Direct clients' Net Deposits, gross amount:</p>
+                  <p>{$clientData['dcnd_gross_amt']}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">IB commisssion withdrawal, USD:</p>
+                  <p>{$clientData['tl_ib_com_wdr']}</p>
+                </div>
+                <div class="second-content">
+                  <p class="second-content-text">Points from Direct clients' Net Deposits, net amount:</p>
+                  <p>{$clientData['dcnd_net_amt']}</p>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          {/if}
+
+          <div class="row pt-50">
+            <div class="col">
+              <div class="dashboard-special-card active">
+                <div class="d-flex first-content">
+                  <img src="/images/estate/{$currentLevelInLowerCase}.png" height="40" alt="star">
+                  <span class="cxmd-level-text">{$clientData['ls']}</span>
+                </div>
+                <div class="second-content">
+                  <span class="second-content-text">{$clientData[$currentLevelInLowerCase][0]}</span>
+                </div>
+                <div class="third-content">
+                  {foreach $clientData[$currentLevelInLowerCase] as $key => $vo}
+                  {if $key>0 }
+                  <div class="list-item d-flex">
+                    <div class="disc"></div>
+                    <span class="third-content-text">{$vo}</span>
+                  </div>
+                  {/if}
+                  {/foreach}
+                </div>
+              </div>
+            </div>
+
+            {if $nextLevelInLowerCase!==null }
+            <div class="col next-level-container">
+              <div class="dashboard-special-card">
+                <div class="d-flex first-content">
+                  <img src="/images/estate/{$nextLevelInLowerCase}.png" height="40" alt="star">
+                  <span class="cxmd-level-text">
+                    {$clientData['next_ls_name']}
+                  </span>
+                </div>
+                <div class="second-content">
+                  <span class="second-content-text">
+                    {$clientData[$nextLevelInLowerCase][0]}
+                  </span>
+                </div>
+                <div class="third-content">
+                  {foreach $clientData[$nextLevelInLowerCase] as $key => $vo}
+                  {if $key>0 }
+                  <div class="list-item d-flex">
+                    <div class="disc"></div>
+                    <span class="third-content-text">{$vo}</span>
+                  </div>
+                  {/if}
+                  {/foreach}
+                </div>
+              </div>
+              <img src="/images/estate/lock.png" class="lock-image" height="25" alt="star">
+            </div>
+            {/if}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
+
+{block name="script"}
+<script src="__STATIC__/ucenter/js/main.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.js"></script>
+<script src="/js/jquery.lineProgressbar.js"></script>
+<script>
+  $(function () {
+    // 设置当前高亮菜单
+    $("#{$tab}").addClass('active');
+
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+      const logout = "{$logout}";
+      if (logout && logout === '1') {
+        logoutBtn.click();
+      }
+    }
+  });
+
+  const subscriptionSwitchInput = document.querySelector('.subscription-switch-input');
+  const crmUserId = "{$crmUserId}";
+  const appHost = "{$appHost}";
+
+  if (subscriptionSwitchInput) {
+    let previousSwicthStatus = subscriptionSwitchInput.checked;
+    subscriptionSwitchInput.addEventListener('change', () => {
+      const confirmation = subscriptionSwitchInput.checked ? confirm('您是否同意使用积分抵扣出金手续费？') : confirm('您是否取消使用积分抵扣出金手续费？');
+      subscriptionSwitchInput.checked = confirmation ? subscriptionSwitchInput.checked : previousSwicthStatus;
+      previousSwicthStatus = subscriptionSwitchInput.checked;
+      if (confirmation) {
+        fetch(`${appHost}/api/Subscription/updateStatus`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ crmUserId: crmUserId, subscriptionStatus: subscriptionSwitchInput.checked }),
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (response.code !== 200) {
+              alert(response.msg);
+            } else {
+              const subscriptionLabel = document.querySelector('.subscription-label');
+              if (subscriptionLabel) {
+                subscriptionLabel.innerHTML = subscriptionSwitchInput.checked ? '积分抵扣出金手续费状态: 已激活' : '积分抵扣出金手续费状态: 未激活';
+              }
+              alert(response.msg);
+            }
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      }
+    });
+  }
+
+  const lsValue = "{$clientData['ls_value']}";
+  const lsToNext = "{$clientData['ls_to_next']}";
+
+  const currentLevelInLowerCase = "{$currentLevelInLowerCase}";
+  const chartColor = currentLevelInLowerCase === 'silver' ? '#8D8C8A' : currentLevelInLowerCase === 'gold' ? '#C7AA62' : currentLevelInLowerCase === 'platinum' ? '#7AA5AE' : '#C9D9F0';
+
+  const isIb = "{$isIb}";
+
+  const currentPoint = "{$clientData['ls_value']}";
+  const nextLevelPoint = "{$clientData['next_ls_value']}";
+  const currentProgressToNextLevel = (parseFloat(currentPoint) / parseFloat(nextLevelPoint)) * 100;
+
+  const currentMemberLevel = "{$currentLevelInLowerCase}";
+
+  const color = {
+    silver: '#5d5d5d',
+    gold: '#50380A',
+    platinum: '#30545B',
+    diamond: '#10224F',
+  };
+
+  $('#points-progress-bar').LineProgressbar({
+    percentage: currentProgressToNextLevel,
+    fillBackgroundColor: color[currentMemberLevel],
+    height: '10px',
+    radius: '15px',
+    ShowProgressCount: false,
+    width: '80%'
+  });
+
+  if (isIb === 'true') {
+    const currentWaterMark = "{$clientData['dcnd_amt']|default=0}"
+    const nextWaterMark = "{$clientData['last_hwm_amt']|default=0}";
+    const currentWaterMarkProgressToNextLevel = parseFloat(currentWaterMark) / parseFloat(nextWaterMark);
+
+    const currentLp = "{$clientData['dcnd_amt']|default=0}"
+    const nextLp = "{$thresholdUnlock}";
+    const currentLpProgressToNextLevel = parseFloat(currentLp) / parseFloat(nextLp);
+
+    $('#lp-status-progressbar').LineProgressbar({
+      percentage: currentLpProgressToNextLevel,
+      fillBackgroundColor: '#76B65B',
+      height: '10px',
+      radius: '15px',
+      ShowProgressCount: false,
+      width: '100%'
+    });
+
+    $('#mark-status-progressbar').LineProgressbar({
+      percentage: currentLpProgressToNextLevel,
+      fillBackgroundColor: '#76B65B',
+      height: '10px',
+      radius: '15px',
+      ShowProgressCount: false,
+      width: '100%'
+    });
+  }
+</script>
+{/block}

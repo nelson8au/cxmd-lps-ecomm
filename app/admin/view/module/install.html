@@ -1,0 +1,25 @@
+<form action="{:url('admin/module/install')}" method="post" class="ajax-form" role="form">
+    <div class="form-body">
+        <div class="form-group">
+            <label class="">UID</label>
+            <div class="">
+                <input type="hidden" name="name" value="{$module['name']}">
+                {$module.name}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="">Module Name</label>
+            <div class="">
+                <input type="text" class="form-control" name="alias" placeholder="Module Name" value="{$module['alias']}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class=""></label>
+            <div class="form-controls">
+                <button type="submit" class="btn btn-block btn-success">Install</button>
+            </div>
+        </div>
+    </div>
+</form>

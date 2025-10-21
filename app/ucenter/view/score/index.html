@@ -1,0 +1,80 @@
+{extend name="../../common/view/main"/}
+{block name="style"}
+<link href="__STATIC__/ucenter/css/main.min.css" rel="stylesheet">
+{/block}
+{block name="body"}
+
+<div id="main-container" class="user-config">
+    <div class="container-fixed clearfix">
+        <div class="left-slide">
+            {include file="common/_slide"/}
+        </div>
+        <div class="right-content">
+            <div id="center" class="integral">
+                <div class="integral-content">
+                    <h4 class="integral-title">我的积分</h4>
+                    <div class="score-type">
+                        {foreach $scores as $k => $v}
+                        <div class="item score{$v.id} integrate">
+                            <div class="gold-coin"><img src="__STATIC__/ucenter/images/species.png" alt=""></div>
+                            <div class="quantity">
+                                <p>{$v.title}</p>
+                                <span class="">{$v.value} {$v.unit}</span>
+                            </div>
+                        </div>
+                        {/foreach}
+                    </div> 
+                </div>
+                
+                <div class="integral-detail">
+                    <div class="integral-detail-header">
+                        <h4 class="detail-title">积分明细</h4>
+                    </div>
+                    <div class="integral-detail-body">
+                        <div class="detail-header">
+                            <span class="integrate-type">类型</span>
+                            <span class="change-integrate">变更积分</span>
+                            <span class="acquire-manner">获取方式</span>
+                            <span class="acquire-time">获取时间</span>
+                        </div>
+                        {notempty name="$lists.data"}
+                        <ul class="detail">
+                            {foreach $lists.data as $k => $v}
+                            <li>
+                                <span class="integrate-type">{$v.type.title}</span>
+                                <span class="change-integrate">{if $v.action == 'inc'}+{else}-{/if} {$v.value}</span>
+                                <span class="acquire-manner">{$v.remark}</span>
+                                <span class="acquire-time">{$v.create_time_friendly_str}</span>
+                            </li>
+                            {/foreach}
+                        </ul>
+                        {else}
+                        {include file="../../common/view/empty"/}
+                        {/notempty}
+                    </div>
+                    <div class="paging">
+                        <div style="text-align:center;">
+                            <div class="my-page">
+                                {:htmlspecialchars_decode($pager)}
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+{/block}
+
+{block name="script"}
+<script src="__STATIC__/ucenter/js/main.min.js"></script>
+<script>
+    $(function () {
+        // 设置当前高亮菜单
+        $("#{$tab}").addClass('active');
+    });
+</script>
+
+{/block}
