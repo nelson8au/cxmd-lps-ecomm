@@ -4,8 +4,8 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "executionRoleArn": "arn:aws:iam::726468838177:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::726468838177:role/ecsTaskRole",
   "containerDefinitions": [
     {
       "name": "php-app",
