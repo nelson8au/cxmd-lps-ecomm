@@ -48,9 +48,8 @@ jobs:
         run: |
           # Replace image placeholder in local copy of task-definition
           sed "s|REPLACE_IMAGE|${{ steps.vars.outputs.IMAGE_URI }}|g" ecs/task-definition.json > ecs/task-def-for-register.json
-          # Replace DB host placeholder if you want (optional)
-          sed -i "s|REPLACE_DB_HOST|${{ secrets.DB_HOST }}|g" ecs/task-def-for-register.json
-          cat ecs/task-def-for-register.json
+          # # Replace DB host placeholder if you want (optional)
+        
 
       - name: Register task definition
         run: |
