@@ -1,5 +1,5 @@
 {
-  "family": "my-php-ecomm-task",
+  "family": "cxmd-lps-ecom-task",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
